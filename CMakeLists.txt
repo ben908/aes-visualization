@@ -52,7 +52,8 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 list(APPEND CORE_SOURCE_FILES   src/core/aes.cc)
 
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
-                            src/visualizer/aes_app.cc)
+                            src/visualizer/aes_app.cc
+                            src/visualizer/state_displayer.cc)
 
 list(APPEND TEST_FILES tests/aes_test.cc
                         tests/test_main.cc)

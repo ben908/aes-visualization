@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 #include "constants.h"
 
@@ -12,6 +13,18 @@ class AES {
    * to say what size key using, 128, 196, or 256, and will set constants then
    */
   static const size_t kColumnCount = 4;
+  
+  enum step {
+    Start,
+    End,
+    ByteSubstitution,
+    RowShifting,
+    ColumnMix,
+    RoundKeyAddition,
+    InvByteSubstitution,
+    InvRowShift,
+    InvColumnMix,
+  };
 
   /**
    * Makes an instance of the class
@@ -79,6 +92,8 @@ class AES {
   static unsigned char FiniteMultiply(unsigned char val0, unsigned char val1);
   
  private:
+  std::vector<std::tuple<step, unsigned char*>> all_states_; 
+  
   void MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key[]) const;
   void AddRoundKey(const unsigned char* current_key);
   
@@ -99,14 +114,14 @@ class AES {
 
   void InvSubBytes();
   
-  unsigned char **state;
+  unsigned char **state_;
   
-  unsigned char *message;
-  unsigned char *key;
-  unsigned char *expanded_key;
-  size_t key_block_length; //Nk
-  size_t block_size; //Nb
-  size_t num_rounds; //Nr
+  unsigned char *message_;
+  unsigned char *key_;
+  unsigned char *expanded_key_;
+  size_t key_block_length_; //Nk
+  size_t block_size_; //Nb
+  size_t num_rounds_; //Nr
 };
 
 }  // namespace aes

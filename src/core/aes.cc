@@ -6,29 +6,29 @@
 namespace aes {
 
 AES::AES(int keyLength) {
-  block_size = 4;
+  block_size_ = 4;
   if (keyLength == 128) {
-    key_block_length = 4;
-    num_rounds = 10;
+    key_block_length_ = 4;
+    num_rounds_ = 10;
     return;
   }
   if (keyLength == 192) {
-    key_block_length = 6;
-    num_rounds = 12;
+    key_block_length_ = 6;
+    num_rounds_ = 12;
     return;
   }
   if (keyLength == 256) {
-    key_block_length = 8;
-    num_rounds = 14;
+    key_block_length_ = 8;
+    num_rounds_ = 14;
     return;
   }
   throw std::bad_function_call();
 }
 
 void AES::Encrypt(unsigned char* in, unsigned char* out, unsigned char* message_key) {
-  message = in;
-  key = message_key;
-  MakeKeyExpansion(key, expanded_key);
+  message_ = in;
+  key_ = message_key;
+  MakeKeyExpansion(key_, expanded_key_);
   
   size_t length = strlen(reinterpret_cast<const char *>(in));
   size_t padded_length = length;
@@ -37,53 +37,53 @@ void AES::Encrypt(unsigned char* in, unsigned char* out, unsigned char* message_
   }
 }
 
-//in length is 4*block_size, out same, word is block_size*(num_rounds + 1)
+//in length is 4*block_size_, out same, word is block_size_*(num_rounds_ + 1)
 void AES::EncryptBlock(const unsigned char* in, unsigned char* out) {
   for (size_t i = 0; i < 4; i++) {
-    for (size_t j = 0; j < block_size; j++) {
-      state[i][j] = in[i + 4 * j];
+    for (size_t j = 0; j < block_size_; j++) {
+      state_[i][j] = in[i + 4 * j];
     }
   }
-  AddRoundKey(expanded_key);
-  for (size_t current_round = 1; current_round < num_rounds; ++current_round) {
+  AddRoundKey(expanded_key_);
+  for (size_t current_round = 1; current_round < num_rounds_; ++current_round) {
     SubBytes();
     ShiftRows();
     MixColumns();
-    AddRoundKey(expanded_key + current_round * 4 * block_size);
+    AddRoundKey(expanded_key_ + current_round * 4 * block_size_);
   }
   
   SubBytes();
   ShiftRows();
-  AddRoundKey(expanded_key + num_rounds * 4 * block_size);
+  AddRoundKey(expanded_key_ + num_rounds_ * 4 * block_size_);
 }
 
 void AES::DecryptBlock(const unsigned char *in, unsigned char *out) {
   for (size_t i = 0; i < 4; ++i) {
     for (size_t j = 0; j < 4; ++j) {
-      state[i][j] =  in[i + 4 * j];
+      state_[i][j] =  in[i + 4 * j];
     }
   }
   
-  AddRoundKey(expanded_key + num_rounds * 4 * block_size);
+  AddRoundKey(expanded_key_ + num_rounds_ * 4 * block_size_);
   
-  for (size_t current_round = num_rounds - 1; current_round > 0; --current_round) {
+  for (size_t current_round = num_rounds_ - 1; current_round > 0; --current_round) {
     InvSubBytes();
     InverseShiftRows();
-    AddRoundKey(expanded_key + current_round * 4 * block_size);
+    AddRoundKey(expanded_key_ + current_round * 4 * block_size_);
     InverseMixColumns();
   }
   
   InvSubBytes();
   InverseShiftRows();
-  AddRoundKey(expanded_key);
+  AddRoundKey(expanded_key_);
   
 }
 
 void AES::SubBytes() {
   for (size_t i = 0; i < kColumnCount; ++i) {
     for (size_t j = 0; j < kColumnCount; ++j) {
-      unsigned char t = state[i][j];
-      state[i][j] = kS_Box[t / 16][t % 16];
+      unsigned char t = state_[i][j];
+      state_[i][j] = kS_Box[t / 16][t % 16];
     }
   }
 }
@@ -91,8 +91,8 @@ void AES::SubBytes() {
 void AES::InvSubBytes() {
   for (size_t i = 0; i < kColumnCount; ++i) {
     for (size_t j = 0; j < kColumnCount; ++j) {
-      unsigned char t = state[i][j];
-      state[i][j] = kS_Box[t / 16][t % 16];
+      unsigned char t = state_[i][j];
+      state_[i][j] = kS_Box[t / 16][t % 16];
     }
   }
 }
@@ -105,16 +105,16 @@ void AES::ShiftRows() {
 }
 
 void AES::ShiftRow(size_t row, size_t how_many) {
-  //state[row][column]
+  //state_[row][column]
   
   //get the shifted info
   unsigned char info[kColumnCount];
   for (size_t i = 0; i < kColumnCount; ++i) {
-    info[i] = state[row][(i + how_many) % kColumnCount];
+    info[i] = state_[row][(i + how_many) % kColumnCount];
   }
-  //move info into state
+  //move info into state_
   for (size_t i = 0; i < kColumnCount; ++i) {
-    state[row][i] = info[i];
+    state_[row][i] = info[i];
   }
 }
 
@@ -128,15 +128,15 @@ void AES::MixColumns() {
 void AES::MixColumn(size_t column) {
   //implemented form NIST matrix multiplication spec
   
-  unsigned char val0 = state[0][column];
-  unsigned char val1 = state[1][column];
-  unsigned char val2 = state[2][column];
-  unsigned char val3 = state[3][column];
+  unsigned char val0 = state_[0][column];
+  unsigned char val1 = state_[1][column];
+  unsigned char val2 = state_[2][column];
+  unsigned char val3 = state_[3][column];
   
-  state[0][column] = FiniteMultiply(0x02, val0) ^ FiniteMultiply(0x03, val1) ^ val2 ^ val3;
-  state[1][column] = val0 ^ FiniteMultiply(0x02, val1) ^ FiniteMultiply(0x03, val2) ^ val3;
-  state[2][column] = val0 ^ val1 ^ FiniteMultiply(0x02, val2) ^ FiniteMultiply(0x03, val3);
-  state[3][column] = FiniteMultiply(0x03, val0) ^ val1 ^ val2 ^ FiniteMultiply(0x02, val3);
+  state_[0][column] = FiniteMultiply(0x02, val0) ^ FiniteMultiply(0x03, val1) ^ val2 ^ val3;
+  state_[1][column] = val0 ^ FiniteMultiply(0x02, val1) ^ FiniteMultiply(0x03, val2) ^ val3;
+  state_[2][column] = val0 ^ val1 ^ FiniteMultiply(0x02, val2) ^ FiniteMultiply(0x03, val3);
+  state_[3][column] = FiniteMultiply(0x03, val0) ^ val1 ^ val2 ^ FiniteMultiply(0x02, val3);
 }
 
 void AES::InverseMixColumns() {
@@ -147,24 +147,24 @@ void AES::InverseMixColumns() {
 }
 
 void AES::InverseMixColumn(size_t column) {
-  unsigned char val0 = state[0][column];
-  unsigned char val1 = state[1][column];
-  unsigned char val2 = state[2][column];
-  unsigned char val3 = state[3][column];
+  unsigned char val0 = state_[0][column];
+  unsigned char val1 = state_[1][column];
+  unsigned char val2 = state_[2][column];
+  unsigned char val3 = state_[3][column];
 
-  state[0][column] =   FiniteMultiply(0x0e, val0)
+  state_[0][column] =   FiniteMultiply(0x0e, val0)
                      ^ FiniteMultiply(0x0b, val1)
                      ^ FiniteMultiply(0x0d, val2)
                      ^ FiniteMultiply(0x09, val3);
-  state[1][column] =   FiniteMultiply(0x09, val0)
+  state_[1][column] =   FiniteMultiply(0x09, val0)
                      ^ FiniteMultiply(0x0e, val1)
                      ^ FiniteMultiply(0x0b, val2)
                      ^ FiniteMultiply(0x0d, val3);
-  state[2][column] =   FiniteMultiply(0x0d, val0)
+  state_[2][column] =   FiniteMultiply(0x0d, val0)
                      ^ FiniteMultiply(0x09, val1)
                      ^ FiniteMultiply(0x0e, val2)
                      ^ FiniteMultiply(0x0b, val3);
-  state[3][column] =   FiniteMultiply(0x0b, val0)
+  state_[3][column] =   FiniteMultiply(0x0b, val0)
                      ^ FiniteMultiply(0x0d, val1)
                      ^ FiniteMultiply(0x09, val2)
                      ^ FiniteMultiply(0x0e, val3);
@@ -173,7 +173,7 @@ void AES::InverseMixColumn(size_t column) {
 void AES::PrintState() {
   for (size_t i = 0; i < kColumnCount; i++) {
     for (size_t j = 0; j < kColumnCount; ++j) {
-      std::cout << state[i][j] << " ";
+      std::cout << state_[i][j] << " ";
     }
     std::cout << std::endl;
   }
@@ -205,37 +205,37 @@ unsigned char AES::FiniteMultiply(unsigned char val1, unsigned char val2) {
   return p;
 }
 
-//key length is 4 * key_block_length, word length is block_size * (num_rounds+1)
+//key_ length is 4 * key_block_length_, word length is block_size_ * (num_rounds_+1)
 void AES::MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key[]) const {
   
   size_t i = 0;
-  while (i < 4 * key_block_length) {
+  while (i < 4 * key_block_length_) {
     expanded_key[i] = key[i];
     i++;
   }
-  i = 4 * key_block_length;
+  i = 4 * key_block_length_;
   
   unsigned char tmpWord[4];
   unsigned char rotateWord[4];
-  while (i < 4 * block_size * (num_rounds + 1)) {
+  while (i < 4 * block_size_ * (num_rounds_ + 1)) {
     tmpWord[0] = expanded_key[i - 4 + 0];
     tmpWord[1] = expanded_key[i - 4 + 1];
     tmpWord[2] = expanded_key[i - 4 + 2];
     tmpWord[3] = expanded_key[i - 4 + 3];
 
-    if (i / 4 % key_block_length == 0) {
+    if (i / 4 % key_block_length_ == 0) {
       RotWord(tmpWord);
       SubWord(tmpWord);
-      RotateConstant(rotateWord, i / (key_block_length * 4));
+      RotateConstant(rotateWord, i / (key_block_length_ * 4));
       xOrWords(tmpWord, rotateWord, tmpWord);
-    } else if (key_block_length > 6 && i / 4 % key_block_length == 4){
+    } else if (key_block_length_ > 6 && i / 4 % key_block_length_ == 4){
       SubWord(tmpWord);
     }
 
-    expanded_key[i + 0] = expanded_key[i + 0 - 4 * key_block_length] ^ tmpWord[0];
-    expanded_key[i + 1] = expanded_key[i + 1 - 4 * key_block_length] ^ tmpWord[1];
-    expanded_key[i + 2] = expanded_key[i + 2 - 4 * key_block_length] ^ tmpWord[2];
-    expanded_key[i + 3] = expanded_key[i + 3 - 4 * key_block_length] ^ tmpWord[3];
+    expanded_key[i + 0] = expanded_key[i + 0 - 4 * key_block_length_] ^ tmpWord[0];
+    expanded_key[i + 1] = expanded_key[i + 1 - 4 * key_block_length_] ^ tmpWord[1];
+    expanded_key[i + 2] = expanded_key[i + 2 - 4 * key_block_length_] ^ tmpWord[2];
+    expanded_key[i + 3] = expanded_key[i + 3 - 4 * key_block_length_] ^ tmpWord[3];
     i += 4;
   }
 }
@@ -263,8 +263,8 @@ void AES::xOrWords(const unsigned char *in1, const unsigned char *in2, unsigned 
 
 void AES::AddRoundKey(const unsigned char* current_key) {
   for (size_t i = 0; i < 4; ++i) {
-    for (size_t j = 0; j < block_size; ++j) {
-      state[i][j] = state[i][j] ^ current_key[i + 4 * j];
+    for (size_t j = 0; j < block_size_; ++j) {
+      state_[i][j] = state_[i][j] ^ current_key[i + 4 * j];
     }
   }
 }
@@ -284,26 +284,26 @@ void AES::RotWord(unsigned char* word) {
 }
 
 void AES::InverseShiftRows() {
-//ShiftRow(0, block_size - 0); keep for logical step
-  ShiftRow(1, block_size - 1);
-  ShiftRow(2, block_size - 2);
-  ShiftRow(3, block_size - 3);
+//ShiftRow(0, block_size_ - 0); keep for logical step
+  ShiftRow(1, block_size_ - 1);
+  ShiftRow(2, block_size_ - 2);
+  ShiftRow(3, block_size_ - 3);
 }
 
 void AES::SetKey(unsigned char* new_key) {
-  key = new_key;
+  key_ = new_key;
 }
 
-unsigned char *AES::GetKeyExpansion() {
-  return expanded_key;
+unsigned char* AES::GetKeyExpansion() {
+  return expanded_key_;
 }
 
 void AES::SetState(unsigned char to_set_state[4][4]) {
-//  state = to_set_state;
+//  state_ = to_set_state_;
 }
 
 unsigned char* AES::GetState() {
-  return *state;
+  return *state_;
 }
 
 }  // namespace aes
