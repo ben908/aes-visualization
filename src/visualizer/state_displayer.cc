@@ -28,6 +28,6 @@ void StateDisplayer::DisplayColumnMix() {}
 void StateDisplayer::DisplayKeyAdd() {
   
 }
-}
+} //namespace visualizer
 
-}
+} //namespace aes

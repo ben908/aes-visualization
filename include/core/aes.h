@@ -14,6 +14,9 @@ class AES {
    */
   static const size_t kColumnCount = 4;
   
+  /**
+   * holds, all possible steps the algorithm takes, used to recording state history
+   */
   enum step {
     Start,
     End,
@@ -31,18 +34,24 @@ class AES {
    */
   AES(int keyLength);
   
+  /**
+   * Encrypts a block of chars
+   * @param in, original message
+   * @param out, pointer message will be saved to
+   * @param key, key as char array pointer 
+   */
   void Encrypt(unsigned char* in, unsigned char* out, unsigned char* key);
   
   /**
-   * Encrypts data
+   * Encrypts a 128-bit block of data
    * @param message message to encrypt 
    * @param key key, atm just 128bit, planning to add 196 and 256 bit
    * @return pointer to the result
    */
-  void EncryptBlock(const unsigned char in[], unsigned char out[]);
+  void EncryptBlock(const unsigned char* in, unsigned char* out);
 
   /**
-   * Decrypts data
+   * Decrypts a 128-bit block data
    * @param message message to decrypt 
    * @param key key, atm just 128bit, planning to add 196 and 256 bit
    * @return pointer to the result
@@ -56,10 +65,7 @@ class AES {
   void SetKey(unsigned char key[16]);
   
   /**
-   * allows to access individual parts of the cipher key expansion
-   * @param word_number, words are the columns in the current state block
-   *                    this allows you to access the key expansion value that
-   *                    will be XORed with a given column
+   * get the pointer to the location of the key expansion
    * @return  pointer to the key's location
    */
   unsigned char* GetKeyExpansion();
@@ -92,30 +98,112 @@ class AES {
   static unsigned char FiniteMultiply(unsigned char val0, unsigned char val1);
   
  private:
+  /**
+   * variable that holds the history of all states
+   */
   std::vector<std::tuple<step, unsigned char*>> all_states_; 
   
-  void MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key[]) const;
+  /**
+   * Helper that makes the key expansion
+   * @param key original key
+   * @param expanded_key place the saved key is saved to
+   */
+  void MakeKeyExpansion(const unsigned char* key, unsigned char* expanded_key) const;
+  /**
+   * Adds round key to state
+   * @param current_key 
+   */
   void AddRoundKey(const unsigned char* current_key);
   
+  /**
+   * Mixes columns through matrix multiplication
+   */
   void MixColumns();
+  
+  /**
+   * Mixes an individual column
+   * @param column 
+   */
   void MixColumn(size_t column);
+  
+  /**
+   * Shifts all rows
+   */
   void ShiftRows();
+  
+  /**
+   * shifts individual row
+   * @param row which row to shift
+   * @param how_many how much to shift each row by
+   */
   void ShiftRow(size_t row, size_t how_many);
+  
+  /**
+   * sends bytes through s box
+   */
   void SubBytes();
+  
+  /**
+   * calculates the word to substitute in key expansion
+   * @param word 
+   */
   static void SubWord(unsigned char* word);
+  
+  /**
+   * rots words of the key expansion
+   * @param word 
+   */
   static void RotWord(unsigned char* word);
+  
+  /**
+   * rots individual key
+   * @param to_change word to rotate
+   * @param amount amount to rotate
+   */
   static void RotateConstant(unsigned char *to_change, int amount);
+  
+  /**
+   * mutlplication on field at set point
+   * @param in value to mutiple x1b by
+   * @return value
+   */
   static unsigned char xtime(unsigned char in);
+  
+  /**
+   * xoring two words of the expanded key
+   * @param in1 word1
+   * @param in2 word2
+   * @param output XORed result
+   */
   static void xOrWords(const unsigned char *in1, const unsigned char *in2, unsigned char *output);
   
+  /**
+   * unmixes columns
+   */
   void InverseMixColumns();
+  
+  /**
+   * unmix individual column
+   * @param column 
+   */
   void InverseMixColumn(size_t column);
+  
+  /**
+   * unshifts all rows
+   */
   void InverseShiftRows();
 
+  /**
+   * shifts all rows
+   */
   void InvSubBytes();
-  
+
+  /**
+   * Current State
+   */
   unsigned char **state_;
   
+  /** Values stored throughout encryption*/
   unsigned char *message_;
   unsigned char *key_;
   unsigned char *expanded_key_;

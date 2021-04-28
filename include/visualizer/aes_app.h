@@ -18,7 +18,11 @@ class AESApp : public ci::app::App {
 
   /** methods from cinder to deal with UI */
   void draw() override;
+  
+  /**will be used to all the user to change the progress bar/key length*/
   void mouseDown(ci::app::MouseEvent event) override;
+  
+  /** used to drag along progress bar */
   void mouseDrag(ci::app::MouseEvent event) override;
   void keyDown(ci::app::KeyEvent event) override;
   
@@ -26,12 +30,16 @@ class AESApp : public ci::app::App {
   const size_t kDefaultWindowSize = 875;
   
  private:
+  /** Main algorithm */
   AES aes_;
   
-  
+  /** Called when the window size changes */
   void UpdateSizing();
+  
+  /** Draws the main app structures */
   void DrawMainShapes();
   
+  /** layout values */
   size_t maxX_;
   size_t maxY_;
   
