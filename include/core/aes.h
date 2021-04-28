@@ -17,14 +17,16 @@ class AES {
    * Makes an instance of the class
    */
   AES(int keyLength);
-
+  
+  void Encrypt(unsigned char* in, unsigned char* out, unsigned char* key);
+  
   /**
    * Encrypts data
    * @param message message to encrypt 
    * @param key key, atm just 128bit, planning to add 196 and 256 bit
    * @return pointer to the result
    */
-  unsigned char* EncryptBlock(unsigned char in[], unsigned char out[], unsigned char key[]);
+  void EncryptBlock(const unsigned char in[], unsigned char out[]);
 
   /**
    * Decrypts data
@@ -32,7 +34,7 @@ class AES {
    * @param key key, atm just 128bit, planning to add 196 and 256 bit
    * @return pointer to the result
    */
-  unsigned char* DecryptBlock(unsigned char in[], unsigned char out[]);
+  void DecryptBlock(const unsigned char in[], unsigned char out[]);
 
   /**
    * method that sets the key, used for testing
@@ -77,8 +79,8 @@ class AES {
   static unsigned char FiniteMultiply(unsigned char val0, unsigned char val1);
   
  private:
-  void MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key[]);
-  void AddRoundKey(unsigned char* current_key);
+  void MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key[]) const;
+  void AddRoundKey(const unsigned char* current_key);
   
   void MixColumns();
   void MixColumn(size_t column);
@@ -87,7 +89,7 @@ class AES {
   void SubBytes();
   static void SubWord(unsigned char* word);
   static void RotWord(unsigned char* word);
-  void RotateConstant(unsigned char *to_change, int amount);
+  static void RotateConstant(unsigned char *to_change, int amount);
   static unsigned char xtime(unsigned char in);
   static void xOrWords(const unsigned char *in1, const unsigned char *in2, unsigned char *output);
   
@@ -97,11 +99,11 @@ class AES {
 
   void InvSubBytes();
   
-  unsigned char state[4][4];
+  unsigned char **state;
   
   unsigned char *message;
-  unsigned char key[];
-  unsigned char expanded_key[];
+  unsigned char *key;
+  unsigned char *expanded_key;
   size_t key_block_length; //Nk
   size_t block_size; //Nb
   size_t num_rounds; //Nr

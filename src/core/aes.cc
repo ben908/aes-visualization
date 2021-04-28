@@ -25,8 +25,20 @@ AES::AES(int keyLength) {
   throw std::bad_function_call();
 }
 
+void AES::Encrypt(unsigned char* in, unsigned char* out, unsigned char* message_key) {
+  message = in;
+  key = message_key;
+  MakeKeyExpansion(key, expanded_key);
+  
+  size_t length = strlen(reinterpret_cast<const char *>(in));
+  size_t padded_length = length;
+  if ((padded_length % 16) != 0) {
+    padded_length = (padded_length / 16 + 1) * 16;
+  }
+}
+
 //in length is 4*block_size, out same, word is block_size*(num_rounds + 1)
-unsigned char * AES::EncryptBlock(unsigned char in[], unsigned char out[], unsigned char key[]) {
+void AES::EncryptBlock(const unsigned char* in, unsigned char* out) {
   for (size_t i = 0; i < 4; i++) {
     for (size_t j = 0; j < block_size; j++) {
       state[i][j] = in[i + 4 * j];
@@ -43,10 +55,9 @@ unsigned char * AES::EncryptBlock(unsigned char in[], unsigned char out[], unsig
   SubBytes();
   ShiftRows();
   AddRoundKey(expanded_key + num_rounds * 4 * block_size);
-  out = state;
 }
 
-unsigned char * AES::DecryptBlock(unsigned char *in, unsigned char *out) {
+void AES::DecryptBlock(const unsigned char *in, unsigned char *out) {
   for (size_t i = 0; i < 4; ++i) {
     for (size_t j = 0; j < 4; ++j) {
       state[i][j] =  in[i + 4 * j];
@@ -194,16 +205,8 @@ unsigned char AES::FiniteMultiply(unsigned char val1, unsigned char val2) {
   return p;
 }
 
-unsigned char *AES::Encrypt(unsigned char *message, unsigned char *key) {
-    return nullptr;
-}
-
-unsigned char *AES::Decrypt(unsigned char *message, unsigned char *key) {
-    return nullptr;
-}
-
 //key length is 4 * key_block_length, word length is block_size * (num_rounds+1)
-void AES::MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key[]) {
+void AES::MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key[]) const {
   
   size_t i = 0;
   while (i < 4 * key_block_length) {
@@ -239,7 +242,7 @@ void AES::MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key
 
 void AES::RotateConstant(unsigned char *to_change, int amount) {
   unsigned char temp = 1;
-  for (size_t i = 0; i < amount - 1; ++i) {
+  for (size_t i = 0; i < (size_t) amount - 1; ++i) {
     temp = xtime(temp);
   }
   to_change[0] = temp;
@@ -258,7 +261,7 @@ void AES::xOrWords(const unsigned char *in1, const unsigned char *in2, unsigned 
   }
 }
 
-void AES::AddRoundKey(unsigned char* current_key) {
+void AES::AddRoundKey(const unsigned char* current_key) {
   for (size_t i = 0; i < 4; ++i) {
     for (size_t j = 0; j < block_size; ++j) {
       state[i][j] = state[i][j] ^ current_key[i + 4 * j];
@@ -296,11 +299,11 @@ unsigned char *AES::GetKeyExpansion() {
 }
 
 void AES::SetState(unsigned char to_set_state[4][4]) {
-  state = to_set_state;
+//  state = to_set_state;
 }
 
-unsigned char *AES::GetState() {
-  return nullptr;
+unsigned char* AES::GetState() {
+  return *state;
 }
 
 }  // namespace aes
