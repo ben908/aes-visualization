@@ -12,15 +12,11 @@ class AES {
    * to say what size key using, 128, 196, or 256, and will set constants then
    */
   static const size_t kColumnCount = 4;
-  //todo: might need to change these constants if going above 128bit encryption
-  static const size_t kWordCount = 4;
-  static const size_t kNumberRound = 10;
-  static const size_t kBlockLength = 128;
 
   /**
    * Makes an instance of the class
    */
-  AES();
+  AES(int keyLength);
 
   /**
    * Encrypts data
@@ -28,7 +24,7 @@ class AES {
    * @param key key, atm just 128bit, planning to add 196 and 256 bit
    * @return pointer to the result
    */
-  unsigned char* Encrypt(unsigned char message[], unsigned char key[]);
+  unsigned char* EncryptBlock(unsigned char in[], unsigned char out[], unsigned char key[]);
 
   /**
    * Decrypts data
@@ -36,7 +32,7 @@ class AES {
    * @param key key, atm just 128bit, planning to add 196 and 256 bit
    * @return pointer to the result
    */
-  unsigned char* Decrypt(unsigned char message[], unsigned char key[]);
+  unsigned char* DecryptBlock(unsigned char in[], unsigned char out[]);
 
   /**
    * method that sets the key, used for testing
@@ -51,7 +47,7 @@ class AES {
    *                    will be XORed with a given column
    * @return  pointer to the key's location
    */
-  unsigned char* GetKeyExpansion(size_t word_number);
+  unsigned char* GetKeyExpansion();
   
   /**
    * allows the current state block to be changed, used for testing
@@ -81,97 +77,34 @@ class AES {
   static unsigned char FiniteMultiply(unsigned char val0, unsigned char val1);
   
  private:
-  /**
-   * Creates the key expansion, saves in private variable
-   */
-  void MakeKeyExpansion(); 
+  void MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key[]);
+  void AddRoundKey(unsigned char* current_key);
   
-  /**
-   * adds the round key to current state block
-   */
-  void AddRoundKey();
-  
-  /**
-   * Mixes the columns through by hand, longwise matrix multiplication
-   */
   void MixColumns();
-  
-  /**
-   * mixes individual columns
-   * @param column column to mix
-   */
   void MixColumn(size_t column);
-  
-  /**
-   * shits all rows by the correct values
-   */
   void ShiftRows();
-  
-  /**
-   * shifts a given row by a certain amount
-   * @param row, row to shift
-   * @param how_many, how many positions to shift row
-   */
   void ShiftRow(size_t row, size_t how_many);
-  
-  /**
-   * Method that switches current state values through s box (substitute box)
-   */
   void SubBytes();
+  static void SubWord(unsigned char* word);
+  static void RotWord(unsigned char* word);
+  void RotateConstant(unsigned char *to_change, int amount);
+  static unsigned char xtime(unsigned char in);
+  static void xOrWords(const unsigned char *in1, const unsigned char *in2, unsigned char *output);
   
-  /**
-   * switches the key expansion word to new value, also through s box
-   */
-  void SubWord();
-  
-  /**
-   * Another adjustment to the words that are XORed with the colmns, made by
-   * rotating the values in the words
-   */
-  void RotWords();
-  
-  /**
-   * Undoes the mixing of columns
-   */
   void InverseMixColumns();
-  
-  /**
-   * unmixes an individual column
-   * @param column, which column to unmix
-   */
   void InverseMixColumn(size_t column);
-  
-  /**
-   * undoes the shift of rows
-   */
   void InverseShiftRows();
-  
-  /**
-   * unshifts an individual row
-   * @param row, which row to change
-   * @param how_many, how much to change by
-   */
-  void InverseShiftRow(size_t row, size_t how_many);
-  
-  /**
-   * Puts current state through the inverse s box that was orginally used
-   */
+
   void InvSubBytes();
   
-  
-  /** True if try to encrypt message, false if decrypting */
-  bool is_encrypting;
-
-  /**
-   * current board state
-   */
   unsigned char state[4][4];
   
-  /**
-   * Calculated key expansion
-   */
-  unsigned char* key_expansion[kWordCount * (kNumberRound + 1)];
-    
+  unsigned char *message;
+  unsigned char key[];
+  unsigned char expanded_key[];
+  size_t key_block_length; //Nk
+  size_t block_size; //Nb
+  size_t num_rounds; //Nr
 };
 
 }  // namespace aes
