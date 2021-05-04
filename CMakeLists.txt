@@ -56,7 +56,10 @@ list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
                             src/visualizer/state_displayer.cc)
 
 list(APPEND TEST_FILES tests/aes_test.cc
-                        tests/test_main.cc)
+                        tests/test_main.cc
+                        tests/aes_individual_component_test.cc
+                        tests/aes_encrypt_test.cc
+                        tests/aes_decrypt_test.cc)
 
 add_executable(train-model apps/aes_main.cc ${CORE_SOURCE_FILES})
 target_include_directories(train-model PRIVATE include)

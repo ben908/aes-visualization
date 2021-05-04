@@ -77,7 +77,7 @@ void AES::EncryptBlock(const unsigned char* in, unsigned char* out) {
 void AES::Decrypt(unsigned char* in, unsigned char* out, unsigned char* key) {
   key_ = key;
   MakeKeyExpansion(key_, expanded_key_);
-  EncryptBlock(in, out);
+  DecryptBlock(in, out);
 }
 
 void AES::DecryptBlock(const unsigned char *in, unsigned char *out) {
@@ -180,19 +180,19 @@ void AES::InverseMixColumn(size_t column) {
   unsigned char val2 = state_[2][column];
   unsigned char val3 = state_[3][column];
 
-  state_[0][column] =   FiniteMultiply(0x0e, val0)
+  state_[0][column] =  FiniteMultiply(0x0e, val0)
                      ^ FiniteMultiply(0x0b, val1)
                      ^ FiniteMultiply(0x0d, val2)
                      ^ FiniteMultiply(0x09, val3);
-  state_[1][column] =   FiniteMultiply(0x09, val0)
+  state_[1][column] =  FiniteMultiply(0x09, val0)
                      ^ FiniteMultiply(0x0e, val1)
                      ^ FiniteMultiply(0x0b, val2)
                      ^ FiniteMultiply(0x0d, val3);
-  state_[2][column] =   FiniteMultiply(0x0d, val0)
+  state_[2][column] =  FiniteMultiply(0x0d, val0)
                      ^ FiniteMultiply(0x09, val1)
                      ^ FiniteMultiply(0x0e, val2)
                      ^ FiniteMultiply(0x0b, val3);
-  state_[3][column] =   FiniteMultiply(0x0b, val0)
+  state_[3][column] =  FiniteMultiply(0x0b, val0)
                      ^ FiniteMultiply(0x0d, val1)
                      ^ FiniteMultiply(0x09, val2)
                      ^ FiniteMultiply(0x0e, val3);
@@ -320,6 +320,7 @@ void AES::InverseShiftRows() {
 
 void AES::SetKey(unsigned char* new_key) {
   key_ = new_key;
+  MakeKeyExpansion(key_, expanded_key_);
 }
 
 unsigned char* AES::GetKeyExpansion() {
