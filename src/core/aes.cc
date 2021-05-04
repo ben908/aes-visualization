@@ -279,10 +279,6 @@ void AES::RotateConstant(unsigned char *to_change, int amount) {
   to_change[3] = 0;
 }
 
-unsigned char AES::xtime(unsigned char in) {
-  return (in << 1) ^ (((in >> 7) & 1) * 0x1b);
-}
-
 void AES::xOrWords(const unsigned char *in1, const unsigned char *in2, unsigned char *out) {
   for (size_t i = 0; i < 4; ++i) {
     out[i] = in1[i] ^ in2[i];

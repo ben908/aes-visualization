@@ -176,13 +176,6 @@ class AES {
   static void RotateConstant(unsigned char *to_change, int amount);
   
   /**
-   * mutlplication on field at set point
-   * @param in value to mutiple x1b by
-   * @return value
-   */
-  static unsigned char xtime(unsigned char in);
-  
-  /**
    * xoring two words of the expanded key
    * @param in1 word1
    * @param in2 word2

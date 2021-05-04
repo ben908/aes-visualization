@@ -55,8 +55,8 @@ list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
                             src/visualizer/aes_app.cc
                             src/visualizer/state_displayer.cc)
 
-list(APPEND TEST_FILES tests/aes_test.cc
-                        tests/test_main.cc
+list(APPEND TEST_FILES tests/test_main.cc
+                        tests/aes_general_tests.cc
                         tests/aes_individual_component_test.cc
                         tests/aes_encrypt_test.cc
                         tests/aes_decrypt_test.cc)
