@@ -31,7 +31,7 @@ class AESApp : public ci::app::App {
   
  private:
   /** Main algorithm */
-  AES aes_;
+  AES aes_ = AES(128);
   
   /** Called when the window size changes */
   void UpdateSizing();

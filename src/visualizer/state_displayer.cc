@@ -19,15 +19,8 @@ void StateDisplayer::SetDimensions(vec2 top_left, vec2 bottom_right) {
   bottom_right_ = bottom_right;
 }
 
-void StateDisplayer::DisplaySubBytes() {}
-
-void StateDisplayer::DisplayRowShift() {}
-
-void StateDisplayer::DisplayColumnMix() {}
-
-void StateDisplayer::DisplayKeyAdd() {
   
-}
+
 } //namespace visualizer
 
 } //namespace aes

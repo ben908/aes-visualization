@@ -28,6 +28,11 @@ class AES {
     InvRowShift,
     InvColumnMix,
   };
+  
+  /**
+   * destructor
+   */
+  ~AES();
 
   /**
    * Makes an instance of the class
@@ -49,14 +54,22 @@ class AES {
    * @return pointer to the result
    */
   void EncryptBlock(const unsigned char* in, unsigned char* out);
-
+  
+  /**
+   * Encrypts a block of chars
+   * @param in, original message
+   * @param out, pointer message will be saved to
+   * @param key, key as char array pointer 
+   */
+  void Decrypt(unsigned char* in, unsigned char* out, unsigned char* key);
+  
   /**
    * Decrypts a 128-bit block data
    * @param message message to decrypt 
    * @param key key, atm just 128bit, planning to add 196 and 256 bit
    * @return pointer to the result
    */
-  void DecryptBlock(const unsigned char in[], unsigned char out[]);
+  void DecryptBlock(const unsigned char* in, unsigned char* out);
 
   /**
    * method that sets the key, used for testing
@@ -204,7 +217,6 @@ class AES {
   unsigned char **state_;
   
   /** Values stored throughout encryption*/
-  unsigned char *message_;
   unsigned char *key_;
   unsigned char *expanded_key_;
   size_t key_block_length_; //Nk

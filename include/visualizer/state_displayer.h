@@ -40,11 +40,6 @@ class StateDisplayer {
   void SetDimensions(vec2 top_left, vec2 bottom_right);
   
  private:
-  /** Display Helpers for individual states**/
-  void DisplaySubBytes();
-  void DisplayRowShift();
-  void DisplayColumnMix();
-  void DisplayKeyAdd();
   
   /**Values for the places the data should be displayed in*/
   vec2 top_left_;

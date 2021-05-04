@@ -14,13 +14,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Warning flags
-if(MSVC)
-    # warning level 3 and all warnings as errors
-    add_compile_options(/W3 /WX)
-else()
-    # lots of warnings and all warnings as errors
-    add_compile_options(-Wall -Wpedantic -Werror)
-endif()
+#if(MSVC)
+#    # warning level 3 and all warnings as errors
+#    add_compile_options(/W3 /WX)
+#else()
+#    # lots of warnings and all warnings as errors
+#    add_compile_options(-Wall -Wpedantic -Werror)
+#endif()
 
 # FetchContent added in CMake 3.11, downloads during the configure step
 include(FetchContent)

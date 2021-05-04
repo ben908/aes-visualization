@@ -5,6 +5,7 @@ namespace aes {
 namespace visualizer {
 
 AESApp::AESApp() {
+  
   ci::app::setWindowSize((int) kDefaultWindowSize, (int) kDefaultWindowSize);
 
 }

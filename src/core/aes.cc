@@ -7,34 +7,44 @@ namespace aes {
 
 AES::AES(int keyLength) {
   block_size_ = 4;
+  state_ = new unsigned char *[4];
+  state_[0] = new unsigned char[4 * block_size_];
+  for (size_t i = 0; i < 4; ++i) {
+    state_[i] = state_[0] + block_size_ * i;
+  }
+  
   if (keyLength == 128) {
     key_block_length_ = 4;
     num_rounds_ = 10;
+    expanded_key_ = new unsigned char[4 * block_size_ * (num_rounds_ + 1)];
     return;
   }
   if (keyLength == 192) {
     key_block_length_ = 6;
     num_rounds_ = 12;
+    expanded_key_ = new unsigned char[4 * block_size_ * (num_rounds_ + 1)];
     return;
   }
   if (keyLength == 256) {
     key_block_length_ = 8;
     num_rounds_ = 14;
+    expanded_key_ = new unsigned char[4 * block_size_ * (num_rounds_ + 1)];
     return;
   }
   throw std::bad_function_call();
 }
 
+AES::~AES() {
+  delete[] expanded_key_;
+  delete[] state_[0];
+  delete[] state_;
+}
+
+
 void AES::Encrypt(unsigned char* in, unsigned char* out, unsigned char* message_key) {
-  message_ = in;
   key_ = message_key;
   MakeKeyExpansion(key_, expanded_key_);
-  
-  size_t length = strlen(reinterpret_cast<const char *>(in));
-  size_t padded_length = length;
-  if ((padded_length % 16) != 0) {
-    padded_length = (padded_length / 16 + 1) * 16;
-  }
+  EncryptBlock(in, out);
 }
 
 //in length is 4*block_size_, out same, word is block_size_*(num_rounds_ + 1)
@@ -55,6 +65,19 @@ void AES::EncryptBlock(const unsigned char* in, unsigned char* out) {
   SubBytes();
   ShiftRows();
   AddRoundKey(expanded_key_ + num_rounds_ * 4 * block_size_);
+
+  for (size_t i = 0; i < 4; i++) {
+    for (size_t j = 0; j < block_size_; j++) {
+      out[i + 4 * j] = state_[i][j];
+    }
+  }
+}
+
+
+void AES::Decrypt(unsigned char* in, unsigned char* out, unsigned char* key) {
+  key_ = key;
+  MakeKeyExpansion(key_, expanded_key_);
+  EncryptBlock(in, out);
 }
 
 void AES::DecryptBlock(const unsigned char *in, unsigned char *out) {
@@ -77,6 +100,11 @@ void AES::DecryptBlock(const unsigned char *in, unsigned char *out) {
   InverseShiftRows();
   AddRoundKey(expanded_key_);
   
+  for (size_t i = 0; i < 4; i++) {
+    for (size_t j = 0; j < block_size_; j++) {
+      out[i + 4 * j] = state_[i][j];
+    }
+  }
 }
 
 void AES::SubBytes() {
@@ -243,7 +271,7 @@ void AES::MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key
 void AES::RotateConstant(unsigned char *to_change, int amount) {
   unsigned char temp = 1;
   for (size_t i = 0; i < (size_t) amount - 1; ++i) {
-    temp = xtime(temp);
+    temp = (temp << 1) ^ (((temp >> 7) & 1) * 0x1b);
   }
   to_change[0] = temp;
   to_change[1] = 0;
