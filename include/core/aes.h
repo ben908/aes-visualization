@@ -84,16 +84,17 @@ class AES {
   unsigned char* GetKeyExpansion();
   
   /**
-   * Gets the current state block
-   * @return the state 
-   */
-  unsigned char* GetState();
-  
-  /**
    * Helpful debugger that lets me print the state as the program executes
    * so i can check each step is going well.
    */
   void PrintState();
+
+  /**
+   * Getter for the state history of the encryption or decryption process
+   * @return vector of tuples, first val is the step that was needed to get to
+   * the state in the second position of the tuple
+   */
+  const std::vector<std::tuple<Step, unsigned char*>*>& GetAllState();
   
   /**
    * Helper method that multiplies two unsigned char values in the Galois

@@ -10,9 +10,12 @@ const ci::Color8u AESApp::kProgressBarColor = ci::Color8u(0, 204, 0);
 const std::string AESApp::kFontName = "Arial";
 
 AESApp::AESApp() {
-  
   ci::app::setWindowSize((int) kDefaultWindowSize, (int) kDefaultWindowSize);
-
+//  state_displayer_ = StateDisplayer();
+//  state_displayer_.SetDimensions(
+//      vec2(0,0),
+//      vec2(kDefaultWindowSize, kDefaultWindowSize));
+  is_animating_ = false;
 }
 
 void AESApp::draw() {
@@ -41,28 +44,50 @@ void AESApp::DrawMainShapes() {
 }
 
 void AESApp::DrawLoadBar() {
-  
-  
+  ci::gl::color(kBorderColor);
+  ci::gl::drawStrokedRect(
+      ci::Rectf(loading_bar_top_left_, loading_bar_bottom_right_));
+  //TODO::add green % part
   
 }
 
 void AESApp::DrawMessage() {
-  
-  
+  ci::gl::color(kBorderColor);
+  ci::gl::drawStrokedRect(
+      ci::Rectf(message_box_top_left_, message_box_bottom_right_));
+  //TODO:: display message text
+
 }
 
 void AESApp::DrawKey() {
-  
-  
+  ci::gl::color(kBorderColor);
+  ci::gl::drawStrokedRect(
+      ci::Rectf(key_box_top_left_, key_box_bottom_right_));
+  //TODO:: display key text
+
 }
 
 void AESApp::DrawCurrentStep() {
+  ci::gl::color(kBorderColor);
+  ci::gl::drawStrokedRect(
+      ci::Rectf(state_displayer_top_left_, state_displayer_bottom_right_));
   
+  if (is_animating_) {
+//    state_displayer_.DisplayStateChange(); //TODO:: vector location
+  } else {
+//    state_displayer_.DisplaySingleState(); //TODO:: current state
+  }
   
 }
 
 void AESApp::update() {
-
+  clock_++;
+  if (clock_ % 10 == 0) {
+    current_state_++;
+  }
+  if (current_state_ > aes_.GetAllState().size()) {
+    is_animating_ = false;
+  }
 }
 
 void AESApp::UpdateSizing() {
@@ -98,6 +123,9 @@ void AESApp::UpdateSizing() {
   
   key_box_top_left_ = vec2(secondary_width_, progress_bar_height_ + 4 * menu_height_individual_);
   key_box_bottom_right_ = vec2(max_X_, max_Y_);
+
+//  state_displayer_.SetDimensions(
+//      state_displayer_top_left_, state_displayer_bottom_right_);
   
 }
 

@@ -355,9 +355,8 @@ void AES::SetKey(unsigned char* new_key) {
 unsigned char* AES::GetKeyExpansion() {
   return expanded_key_;
 }
-
-unsigned char* AES::GetState() {
-  return *state_;
+const std::vector<std::tuple<AES::Step, unsigned char*>*>& AES::GetAllState() {
+  return all_states_;
 }
 
 }  // namespace aes

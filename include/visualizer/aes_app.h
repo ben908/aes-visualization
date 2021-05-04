@@ -5,6 +5,7 @@
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
+#include "state_displayer.h"
 
 namespace aes {
 
@@ -36,6 +37,13 @@ class AESApp : public ci::app::App {
   const size_t kDefaultWindowSize = 875;
   
  private:
+  
+  size_t clock_;
+  size_t current_state_;
+  bool is_animating_;
+  
+//  StateDisplayer state_displayer_ = StateDisplayer();
+  
   /** Main algorithm */
   AES aes_ = AES(128);
   

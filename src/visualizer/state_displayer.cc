@@ -5,10 +5,7 @@ namespace aes {
 
 namespace visualizer {
 
-StateDisplayer::StateDisplayer(vec2 top_left, vec2 bottom_right) {
-  top_left_ = top_left;
-  bottom_right_ = bottom_right;
-}
+StateDisplayer::StateDisplayer() { }
 
 void StateDisplayer::DisplayStateChange(
     tuple<AES::Step, unsigned char *> currentState,
@@ -19,7 +16,10 @@ void StateDisplayer::SetDimensions(vec2 top_left, vec2 bottom_right) {
   bottom_right_ = bottom_right;
 }
 
+
+void StateDisplayer::DisplaySingleState(tuple<AES::Step, unsigned char*> currentState) {
   
+}
 
 } //namespace visualizer
 

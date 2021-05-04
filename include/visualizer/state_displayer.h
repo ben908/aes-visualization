@@ -22,7 +22,7 @@ class StateDisplayer {
    * @param top_left top left of the area it can draw in
    * @param bottom_right bottom_right of the area it can draw in
    */
-  StateDisplayer(vec2 top_left, vec2 bottom_right);
+  StateDisplayer();
   
   /**
    * Main method called that shows the change between two states
@@ -31,7 +31,10 @@ class StateDisplayer {
    */
   void DisplayStateChange(tuple<AES::Step, unsigned char*> currentState,
                           tuple<AES::Step, unsigned char*> nextState);
-
+  
+  
+  void DisplaySingleState(tuple<AES::Step, unsigned char*> currentState);
+  
   /**
    * Method that changes the dimensions if the view size changes 
    * @param top_left 

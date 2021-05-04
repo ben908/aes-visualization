@@ -9,8 +9,8 @@ should have the encryption implementation up and running and should have started
 on the decryption part. By the end of week two I hope to be done with visualizing
 the encryption of a value with a key and hopefully have finished the decryption
 part of the algorithm as well. For week three, I plan to finish implementing the
-visualization of the decryption of a message and make it interactive my having people
-type their own message and hitting a button to encrypt or decrypt what they have typed.
+visualization of the decryption of a message and make it interactive by having people 
+  able to move along a timeline at the top of the screen.
 
   If I were to finish the project early, the most I would spend my time on is
 improving the visualization. In my opinion, one of the coolest parts about AES is
