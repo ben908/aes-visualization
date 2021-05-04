@@ -16,6 +16,7 @@ class AESApp : public ci::app::App {
   static const ci::Color kBackgroundColor;
   static const ci::Color kBorderColor;
   static const ci::Color8u kProgressBarColor;
+  static const std::string kFontName;
   
   /** Main Constructor */
   AESApp();
@@ -29,6 +30,7 @@ class AESApp : public ci::app::App {
   /** used to drag along progress bar */
   void mouseDrag(ci::app::MouseEvent event) override;
   void keyDown(ci::app::KeyEvent event) override;
+  void update() override;
   
   /** constants for layout */
   const size_t kDefaultWindowSize = 875;

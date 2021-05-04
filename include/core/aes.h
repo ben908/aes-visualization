@@ -17,7 +17,7 @@ class AES {
   /**
    * holds, all possible steps the algorithm takes, used to recording state history
    */
-  enum step {
+  enum Step {
     Start,
     End,
     ByteSubstitution,
@@ -108,8 +108,9 @@ class AES {
   /**
    * variable that holds the history of all states
    */
-  std::vector<std::tuple<step, unsigned char*>> all_states_; 
+  std::vector<std::tuple<Step, unsigned char*>*> all_states_; 
   
+  void StoreState(Step step, unsigned char**);
   /**
    * Helper that makes the key expansion
    * @param key original key
@@ -197,6 +198,8 @@ class AES {
    * shifts all rows
    */
   void InvSubBytes();
+  
+  void ClearAllStates();
 
   /**
    * Current State

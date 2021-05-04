@@ -7,6 +7,7 @@ namespace visualizer {
 const ci::Color AESApp::kBackgroundColor = "white";
 const ci::Color AESApp::kBorderColor = "black";
 const ci::Color8u AESApp::kProgressBarColor = ci::Color8u(0, 204, 0);
+const std::string AESApp::kFontName = "Arial";
 
 AESApp::AESApp() {
   
@@ -58,6 +59,10 @@ void AESApp::DrawKey() {
 void AESApp::DrawCurrentStep() {
   
   
+}
+
+void AESApp::update() {
+
 }
 
 void AESApp::UpdateSizing() {

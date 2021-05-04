@@ -11,8 +11,8 @@ StateDisplayer::StateDisplayer(vec2 top_left, vec2 bottom_right) {
 }
 
 void StateDisplayer::DisplayStateChange(
-    tuple<AES::step, unsigned char *> currentState,
-    tuple<AES::step, unsigned char *> nextState) {}
+    tuple<AES::Step, unsigned char *> currentState,
+    tuple<AES::Step, unsigned char *> nextState) {}
 
 void StateDisplayer::SetDimensions(vec2 top_left, vec2 bottom_right) {
   top_left_ = top_left_;

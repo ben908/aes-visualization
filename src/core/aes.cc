@@ -35,13 +35,34 @@ AES::AES(int keyLength) {
 }
 
 AES::~AES() {
+  ClearAllStates();
   delete[] expanded_key_;
   delete[] state_[0];
   delete[] state_;
 }
 
+void AES::ClearAllStates() {
+  for (std::tuple<Step, unsigned char*>* tuple : all_states_) {
+    delete std::get<1>(*tuple);
+    delete tuple;
+  }
+  all_states_.clear();
+}
+
+void AES::StoreState(Step step, unsigned char** state) {
+  auto* state_copy = new unsigned char[16];
+  for (size_t i = 0; i < 4; ++i) {
+    for (size_t j = 0; j < block_size_; ++j) {
+      state_copy[i + 4 * j] = state[i][j];
+    }
+  }
+  auto* to_add = new std::tuple<Step, unsigned char*> (step, state_copy);
+  all_states_.push_back(to_add);
+}
+
 
 void AES::Encrypt(unsigned char* in, unsigned char* out, unsigned char* message_key) {
+  ClearAllStates();
   key_ = message_key;
   MakeKeyExpansion(key_, expanded_key_);
   EncryptBlock(in, out);
@@ -54,23 +75,35 @@ void AES::EncryptBlock(const unsigned char* in, unsigned char* out) {
       state_[i][j] = in[i + 4 * j];
     }
   }
+  StoreState(Start, state_);
+  
   AddRoundKey(expanded_key_);
+  StoreState(RoundKeyAddition, state_);
+  
   for (size_t current_round = 1; current_round < num_rounds_; ++current_round) {
     SubBytes();
+    StoreState(ByteSubstitution, state_);
     ShiftRows();
+    StoreState(RowShifting, state_);
     MixColumns();
+    StoreState(ColumnMix, state_);
     AddRoundKey(expanded_key_ + current_round * 4 * block_size_);
+    StoreState(RoundKeyAddition, state_);
   }
   
   SubBytes();
+  StoreState(ByteSubstitution, state_);
   ShiftRows();
+  StoreState(RowShifting, state_);
   AddRoundKey(expanded_key_ + num_rounds_ * 4 * block_size_);
-
+  StoreState(RoundKeyAddition, state_);
+  
   for (size_t i = 0; i < 4; i++) {
     for (size_t j = 0; j < block_size_; j++) {
       out[i + 4 * j] = state_[i][j];
     }
   }
+  StoreState(End, state_);
 }
 
 
