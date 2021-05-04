@@ -9,10 +9,14 @@
 namespace aes {
 
 namespace visualizer {
-
+using glm::vec2;
 
 class AESApp : public ci::app::App {
  public:
+  static const ci::Color kBackgroundColor;
+  static const ci::Color kBorderColor;
+  static const ci::Color8u kProgressBarColor;
+  
   /** Main Constructor */
   AESApp();
 
@@ -39,18 +43,48 @@ class AESApp : public ci::app::App {
   /** Draws the main app structures */
   void DrawMainShapes();
   
-  /** layout values */
-  size_t maxX_;
-  size_t maxY_;
+  void DrawLoadBar();
+  void DrawMessage();
+  void DrawKey();
+  void DrawCurrentStep();
   
-  size_t progressBarHeight_;
-  size_t mainHeight_;
-  size_t bottomButtonHeight_;
-  size_t menuHeightIndividual_;
+  
+  /** layout values */
+  size_t max_X_;
+  size_t max_Y_;
+  
+  size_t progress_bar_height_;
+  size_t main_height_;
+  size_t bottom_button_height_;
+  size_t menu_height_individual_;
 
-  size_t mainWidth_;
-  size_t secondaryWidth_;
-  size_t buttonWidth_;
+  size_t main_width_;
+  size_t secondary_width_;
+  size_t button_width_;
+  
+  vec2 loading_bar_top_left_;
+  vec2 loading_bar_bottom_right_;
+
+  vec2 state_displayer_top_left_;
+  vec2 state_displayer_bottom_right_;
+
+  vec2 message_box_top_left_;
+  vec2 message_box_bottom_right_;
+  
+  vec2 key_box_top_left_;
+  vec2 key_box_bottom_right_;
+  
+  vec2 step_box_top_left_;
+  vec2 step_box_bottom_right_;
+  
+  vec2 main_buttons_top_left_;
+  vec2 main_buttons_bottom_right_;
+  
+  vec2 instructions_top_left_;
+  vec2 instructions_bottom_right_;
+  
+  vec2 key_length_buttons_top_left_;
+  vec2 key_length_buttons_bottom_right_;
   
   double kProgressBarHeightPercent = 0.09;
   double kMainHeightPercent = 0.76;
@@ -58,7 +92,7 @@ class AESApp : public ci::app::App {
   double kMenuHeightIndividualPercent = 0.19;
   
   double kMainWidthPercent = 0.7;
-  double kSecondaryWidthPercent = 0.3;
+  double kSecondaryWidthPercent = 0.85;
   double kButtonWidthPercent = 0.5;
 };
 

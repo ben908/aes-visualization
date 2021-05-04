@@ -4,6 +4,10 @@ namespace aes {
 
 namespace visualizer {
 
+const ci::Color AESApp::kBackgroundColor = "white";
+const ci::Color AESApp::kBorderColor = "black";
+const ci::Color8u AESApp::kProgressBarColor = ci::Color8u(0, 204, 0);
+
 AESApp::AESApp() {
   
   ci::app::setWindowSize((int) kDefaultWindowSize, (int) kDefaultWindowSize);
@@ -11,29 +15,84 @@ AESApp::AESApp() {
 }
 
 void AESApp::draw() {
-  if (maxY_ != ci::app::getWindowHeight()) {
-    maxY_ = ci::app::getWindowHeight();
+  if (max_Y_ != ci::app::getWindowHeight()) {
+    max_Y_ = ci::app::getWindowHeight();
     UpdateSizing();
   }
-  if (maxX_ != ci::app::getWindowWidth()) {
-    maxX_ = ci::app::getWindowWidth();
+  if (max_X_ != ci::app::getWindowWidth()) {
+    max_X_ = ci::app::getWindowWidth();
     UpdateSizing();
   }
-  ci::Color8u background_color(255, 246, 148);  // light yellow
-  ci::gl::clear(background_color);
-
+  ci::gl::clear(kBackgroundColor);
+  
+  DrawMainShapes();
 
 }
 
-void AESApp::UpdateSizing() {
-  progressBarHeight_ = maxY_ * kProgressBarHeightPercent;
-  mainHeight_ = maxY_ * kMainHeightPercent;
-  bottomButtonHeight_ = maxY_ * kBottomButtonHeightPercent;
-  menuHeightIndividual_ = maxY_ * kMenuHeightIndividualPercent;
+void AESApp::DrawMainShapes() {
+
+  ci::gl::color(AESApp::kBackgroundColor);
+//  ci::gl::drawStrokedRect(ci::Rectf(topLeftCorner, bottomRightCorner));
+  DrawLoadBar();
+  DrawMessage();
+  DrawKey();
+  DrawCurrentStep();
+}
+
+void AESApp::DrawLoadBar() {
   
-  mainWidth_ = maxX_ * kMainWidthPercent;
-  secondaryWidth_ = maxX_ * kSecondaryWidthPercent;
-  buttonWidth_ = maxX_ * kButtonWidthPercent;
+  
+  
+}
+
+void AESApp::DrawMessage() {
+  
+  
+}
+
+void AESApp::DrawKey() {
+  
+  
+}
+
+void AESApp::DrawCurrentStep() {
+  
+  
+}
+
+void AESApp::UpdateSizing() {
+  progress_bar_height_ = max_Y_ * kProgressBarHeightPercent;
+  main_height_ = max_Y_ * kMainHeightPercent;
+  bottom_button_height_ = max_Y_ * kBottomButtonHeightPercent;
+  menu_height_individual_ = max_Y_ * kMenuHeightIndividualPercent;
+  
+  main_height_ = max_X_ * kMainWidthPercent;
+  secondary_width_ = max_X_ * kSecondaryWidthPercent;
+  button_width_ = max_X_ * kButtonWidthPercent;
+  
+  loading_bar_top_left_ = vec2(0, 0);
+  loading_bar_bottom_right_ = vec2(max_X_, progress_bar_height_);
+  
+  state_displayer_top_left_ = vec2(0, progress_bar_height_);
+  state_displayer_bottom_right_ = vec2(main_height_, progress_bar_height_ + main_height_);
+  
+  message_box_top_left_ = vec2(main_width_, progress_bar_height_);
+  message_box_bottom_right_ = vec2(max_X_, progress_bar_height_ + 1 * menu_height_individual_);
+  
+  key_box_top_left_ = vec2(main_width_, progress_bar_height_ + 1 * menu_height_individual_);
+  key_box_bottom_right_ = vec2(max_X_, progress_bar_height_ + 2 * menu_height_individual_);
+  
+  step_box_top_left_ = vec2(main_width_, progress_bar_height_ + 2 * menu_height_individual_);
+  step_box_bottom_right_ = vec2(max_X_, progress_bar_height_ + 3 * menu_height_individual_);
+  
+  main_buttons_top_left_ = vec2(main_width_, progress_bar_height_ + 3 * menu_height_individual_);
+  main_buttons_bottom_right_ = vec2(max_X_, progress_bar_height_ + 4 * menu_height_individual_);
+  
+  instructions_top_left_ = vec2(0, progress_bar_height_ + main_height_);
+  instructions_bottom_right_ = vec2(secondary_width_, max_Y_);
+  
+  key_box_top_left_ = vec2(secondary_width_, progress_bar_height_ + 4 * menu_height_individual_);
+  key_box_bottom_right_ = vec2(max_X_, max_Y_);
   
 }
 

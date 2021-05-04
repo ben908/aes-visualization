@@ -84,12 +84,6 @@ class AES {
   unsigned char* GetKeyExpansion();
   
   /**
-   * allows the current state block to be changed, used for testing
-   * @param state 
-   */
-  void SetState(unsigned char state[4][4]);
-  
-  /**
    * Gets the current state block
    * @return the state 
    */
