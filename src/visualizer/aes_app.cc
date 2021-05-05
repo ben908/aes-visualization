@@ -12,7 +12,7 @@ AESApp::~AESApp() {
 }
 
 AESApp::AESApp() {
-  ci::app::setWindowSize(2 * kDefaultWindowSize, kDefaultWindowSize);
+  ci::app::setWindowSize(2 * kDefaultWindowSize, 0.5 * kDefaultWindowSize);
   state_displayer_ = StateDisplayer(kDefaultWindowSize, kDefaultWindowSize);
   clock_ = 0;
   current_state_ = 0;
@@ -29,14 +29,17 @@ void AESApp::MakeRandomInfo() {
   
   encrypted_message_ = new unsigned char[16];
   if (current_key_size_ == 128) {
-   key_ = new unsigned char[16];
-   for (size_t i = 0; i < 16; ++i) key_[i] = (unsigned char) rand();
+    key_size_ = 16;
+    key_ = new unsigned char[16];
+    for (size_t i = 0; i < 16; ++i) key_[i] = (unsigned char) rand();
   }
   if (current_key_size_ == 192) {
+    key_size_ = 24;
     key_ = new unsigned char[24];
     for (size_t i = 0; i < 24; ++i) key_[i] = (unsigned char) rand();
   }
   if (current_key_size_ == 256) {
+    key_size_ = 32;
     key_ = new unsigned char[32];
     for (size_t i = 0; i < 32; ++i) key_[i] = (unsigned char) rand();
   }
@@ -78,8 +81,7 @@ void AESApp::DrawMainShapes() {
   string message = ss.str();
   ss.str("");
   
-  int key_size = sizeof(key_)/sizeof(key_[0]);
-  for (size_t i = 0; i < key_size; ++i) { //for key
+  for (size_t i = 0; i < key_size_; ++i) { //for key
     ss << " " << std::hex << (int)key_[i];
   }
   string key = ss.str();
@@ -108,6 +110,8 @@ void AESApp::UpdateSizing() {
 void AESApp::mouseDown(ci::app::MouseEvent event) {
   if (event.getX() <= 0) {
     current_state_ = 0;
+  } else if (event.getX() > max_X_) {
+    current_state_ = all_states_.size() - 1;
   } else {
     current_state_ = (event.getX() * all_states_.size()) / max_X_;
   }
@@ -117,6 +121,8 @@ void AESApp::mouseDown(ci::app::MouseEvent event) {
 void AESApp::mouseDrag(ci::app::MouseEvent event) {
   if (event.getX() <= 0) {
     current_state_ = 0;
+  } else if (event.getX() > max_X_) {
+    current_state_ = all_states_.size() - 1;
   } else {
     current_state_ = (event.getX() * all_states_.size()) / max_X_;
   }
@@ -141,7 +147,8 @@ void AESApp::keyDown(ci::app::KeyEvent event) {
     case ci::app::KeyEvent::KEY_s:
       is_animating_ = false;
       break;
-      
+
+    case ci::app::KeyEvent::KEY_c:
     case ci::app::KeyEvent::KEY_r:
       is_animating_ = true;
       break;

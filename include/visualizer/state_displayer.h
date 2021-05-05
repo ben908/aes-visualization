@@ -31,7 +31,12 @@ class StateDisplayer {
    */
   void DisplayStateChange(tuple<AES::Step, unsigned char*>* currentState);
   
-  
+  /**
+   * Displays the grid of a single state at
+   * @param top_left, top left corner of drawable area
+   * @param bottom_right, bottom right corner of drawable area
+   * @param currentState, state to draw
+   */
   void DisplaySingleState(vec2 top_left, vec2 bottom_right,
                           unsigned char* currentState);
   
@@ -42,30 +47,26 @@ class StateDisplayer {
    */
   void SetDimensions(size_t width, size_t height);
   
+  /**
+   * Calls the helper class with all the necessary info for the UI
+   * @param percent, progress bar percent
+   * @param message, message being encrypted 
+   * @param key, key being used to encrypt/decrypt message
+   * @param current_step, most recent action of the algorithm that
+   *                      brought it to the current state
+   */
   void DisplaySecondaryInfo(double percent,
                             string message,
                             string key,
                             string current_step);
   
  private:
+  /** Helper that displays all the non-state-grid information */
   DisplayHelper display_helper_;
   
   /**Values for the places the data should be displayed in*/
   vec2 top_left_;
   vec2 bottom_right_;
-  
-  vec2 left_state_top_left_;
-  vec2 left_state_bottom_right_;
-  unsigned char **left_state_values;
-  
-  vec2 right_state_top_left_;
-  vec2 right_state_bottom_right_;
-  
-  /** layout values */
-  double kPaddingPercent = 0.1;
-  
-  size_t rectangle_height_;
-  size_t rectangle_width_;
 };
 
 

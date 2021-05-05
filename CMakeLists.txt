@@ -62,8 +62,8 @@ list(APPEND TEST_FILES tests/test_main.cc
                         tests/aes_encrypt_test.cc
                         tests/aes_decrypt_test.cc)
 
-add_executable(train-model apps/aes_main.cc ${CORE_SOURCE_FILES})
-target_include_directories(train-model PRIVATE include)
+add_executable(aes-model apps/aes_main.cc ${CORE_SOURCE_FILES})
+target_include_directories(aes-model PRIVATE include)
 
 ci_make_app(
         APP_NAME        aes-visualized

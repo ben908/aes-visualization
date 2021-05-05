@@ -1,7 +1,6 @@
 #include <core/aes.h>
 
 #include <functional>
-#include <iostream>
 
 namespace aes {
 
@@ -238,15 +237,6 @@ void AES::InverseMixColumn(size_t column) {
                      ^ FiniteMultiply(0x0d, val1)
                      ^ FiniteMultiply(0x09, val2)
                      ^ FiniteMultiply(0x0e, val3);
-}
-
-void AES::PrintState() {
-  for (size_t i = 0; i < kColumnCount; i++) {
-    for (size_t j = 0; j < kColumnCount; ++j) {
-      std::cout << state_[i][j] << " ";
-    }
-    std::cout << std::endl;
-  }
 }
 
 //multiplication of val0 and val1 in the galois field

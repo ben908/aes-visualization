@@ -5,7 +5,11 @@
 #include "constants.h"
 
 namespace aes {
-    
+
+/**
+ * Implementation of the AES algorithm, all variants key-lengths, as
+ * specified by the national institute of standards and technology 
+ */
 class AES {
  public:
   /**
@@ -29,15 +33,22 @@ class AES {
     InvColumnMix,
   };
   
+  /**
+   * Helper that returns a string value for a given step enum, used in app UI
+   * @param step enum to turn to string
+   * @return string the represents the enum
+   */
   static std::string EnumToString(Step step);
   
   /**
-   * destructor
+   * destructor that deletes all heap allocated memory used by this
+   * implementation
    */
   ~AES();
 
   /**
    * Makes an instance of the class
+   * @param length of the key to make, either 128-bit, 192-bit, or 256-bit
    */
   AES(int keyLength);
   
@@ -84,12 +95,6 @@ class AES {
    * @return  pointer to the key's location
    */
   unsigned char* GetKeyExpansion();
-  
-  /**
-   * Helpful debugger that lets me print the state as the program executes
-   * so i can check each step is going well.
-   */
-  void PrintState();
 
   /**
    * Getter for the state history of the encryption or decryption process

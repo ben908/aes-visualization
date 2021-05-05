@@ -11,9 +11,12 @@ namespace aes {
 namespace visualizer {
 using glm::vec2;
 
+/**
+ * App that visualizes the AES algorithm
+ */
 class AESApp : public ci::app::App {
  public:
-  
+  /** Destructor that deletes the key, message, and encrypted message */
   ~AESApp();
   
   /** Main Constructor */
@@ -28,24 +31,33 @@ class AESApp : public ci::app::App {
   /** used to drag along progress bar */
   void mouseDrag(ci::app::MouseEvent event) override;
   void update() override;
+  
+  /** Used to give commands to the program */
   void keyDown(ci::app::KeyEvent event) override;
   
   /** constants for layout */
   const size_t kDefaultWindowSize = 875;
   
  private:
+  /** Makes a random key and message for a given key size */
   void MakeRandomInfo();
   
+  /** Information about the current app state */
   size_t current_key_size_;
   unsigned char* message_;
   unsigned char* key_;
   unsigned char* encrypted_message_;
-  std::vector<std::tuple<AES::Step, unsigned char*>*> all_states_;
-
-  size_t clock_;
   size_t current_state_;
   bool is_animating_;
+  size_t key_size_;
   
+  /** History of all states that are used to encypt a single block */
+  std::vector<std::tuple<AES::Step, unsigned char*>*> all_states_;
+
+  /** Internal clock used if "e" is pressed and the progress is automatic */
+  size_t clock_;
+  
+  /** Helper that displays most of the app UI */
   StateDisplayer state_displayer_;
   
   /** Main algorithm */
