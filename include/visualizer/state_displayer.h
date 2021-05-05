@@ -43,7 +43,10 @@ class StateDisplayer {
    */
   void SetDimensions(size_t width, size_t height);
   
-  void DisplaySecondaryInfo();
+  void DisplaySecondaryInfo(double percent,
+                            string message,
+                            string key,
+                            string current_step);
   
  private:
   DisplayHelper display_helper_;

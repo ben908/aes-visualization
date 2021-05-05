@@ -368,4 +368,31 @@ const std::vector<std::tuple<AES::Step, unsigned char*>*>& AES::GetAllState() {
   return all_states_;
 }
 
+std::string AES::EnumToString(AES::Step step) {
+  switch(step) {
+    case AES::Start:
+      return "Start Message";
+    case AES::End:
+      return "End Message";
+    case AES::ByteSubstitution:
+      return "Byte Substitution";
+    case AES::RowShifting:
+      return "Row Shifting";
+    case AES::ColumnMix:
+      return "Column Mixing";
+    case AES::RoundKeyAddition:
+      return "Round Key Addition";
+    case AES::InvByteSubstitution:
+      return "Inverse Substitution";
+    case AES::InvRowShift:
+      return "Inverse Row Shift";
+    case AES::InvColumnMix:
+      return "Inverse Column Mix";
+    default:
+      return "Invalid Step";
+  }
+}
+
+
+
 }  // namespace aes

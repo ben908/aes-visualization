@@ -31,14 +31,15 @@ class DisplayHelper {
   
   vec2 GetStateDisplayAreaTopLeft();
   vec2 GetStateDisplayAreaBottomRight();
+
+  static vec2 TextLocation(vec2 top_left, vec2 bottom_right);
+
+  static void DisplayText(vec2 top_left_corner,
+                   vec2 bottom_right_corner,
+                   string text);
   
  private:
   
-  vec2 TextLocation(vec2 top_left, vec2 bottom_right);
-  
-  void DisplayText(vec2 top_left_corner,
-                   vec2 bottom_right_corner,
-                   string text);
   void DrawLoadBar(double percent);
   void DrawMessage(string message);
   void DrawKey(string key);

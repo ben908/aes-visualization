@@ -162,7 +162,7 @@ void DisplayHelper::DrawKeyButtons() {
 
 vec2 DisplayHelper::TextLocation(vec2 top_left, vec2 bottom_right) {
   float xAverage = (top_left.x + bottom_right.x) / 2;
-  float yLocation = top_left.y;
+  float yLocation = (top_left.y + bottom_right.y) / 2;
 
   return vec2(xAverage, yLocation);
 }
@@ -173,7 +173,7 @@ void DisplayHelper::DisplayText(vec2 topLeftCorner,
   
   
   const float fontSize = bottomRightCorner.y - topLeftCorner.y;
-  const ci::Font font = ci::Font(kFontName, fontSize * 0.25);
+  const ci::Font font = ci::Font(kFontName, fontSize * 0.5);
   ci::gl::drawStringCentered(text,
                              TextLocation(topLeftCorner, bottomRightCorner),
                              kBorderColor,

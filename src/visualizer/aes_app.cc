@@ -18,6 +18,8 @@ AESApp::AESApp() {
   current_state_ = 0;
   current_key_size_ = 128;
   MakeRandomInfo();
+  aes_.Encrypt(message_, encrypted_message_, key_);
+  all_states_ = aes_.GetAllState();
   is_animating_ = false;
 }
 
@@ -48,20 +50,34 @@ void AESApp::draw() {
   if(all_states_.size() > current_state_+1) {
     state_displayer_.DisplayStateChange(all_states_[current_state_],
                                         all_states_[current_state_+1]);
+    DrawMainShapes();
   }
-  DrawMainShapes();
+  
 }
 
 void AESApp::DrawMainShapes() {
-
-  state_displayer_.DisplaySecondaryInfo();
+  double percent = current_state_ / all_states_.size();
+  std::stringstream ss;
+  for (size_t i = 0; i < 16; ++i) { //for message
+    ss << " " << std::hex << (int)message_[i];
+  }
+  string message = ss.str();
+  ss.str("");
+  for (size_t i = 0; i < 16; ++i) { //for key TODO::make this dynamic
+    ss << " " << std::hex << (int)key_[i];
+  }
+  string key = ss.str();
+  string step = AES::EnumToString(std::get<0>(*all_states_[current_state_ + 1]));
+  state_displayer_.DisplaySecondaryInfo(percent, message, key, step);
 }
 
 
 
 void AESApp::update() {
-  clock_++;
-  if (clock_ % 10 == 0) {
+  if (is_animating_) {
+    clock_++;
+  }
+  if (clock_ % 20 == 1) {
     current_state_++;
   }
   if (current_state_ >= aes_.GetAllState().size()) {
@@ -94,6 +110,11 @@ void AESApp::keyDown(ci::app::KeyEvent event) {
     case ci::app::KeyEvent::KEY_d:
       aes_.Decrypt(encrypted_message_, message_, key_);
       all_states_ = aes_.GetAllState();
+      is_animating_ = false;
+      break;
+
+    case ci::app::KeyEvent::KEY_p:
+    case ci::app::KeyEvent::KEY_s:
       is_animating_ = false;
       break;
       

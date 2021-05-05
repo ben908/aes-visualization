@@ -29,6 +29,8 @@ class AES {
     InvColumnMix,
   };
   
+  static std::string EnumToString(Step step);
+  
   /**
    * destructor
    */
