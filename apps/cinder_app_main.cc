@@ -1,3 +1,4 @@
+#include <cinder/app/RendererGl.h>
 #include <visualizer/aes_app.h>
 
 using aes::visualizer::AESApp;

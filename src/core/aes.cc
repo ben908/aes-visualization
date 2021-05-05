@@ -247,7 +247,7 @@ unsigned char AES::FiniteMultiply(unsigned char val1, unsigned char val2) {
   unsigned char p = 0; //end product
   unsigned char single_limit = 0x80; // limiting bit individual bit value (half ff)
   unsigned char high_byte = 0; //value from second val
-  unsigned char mod = 0x1B; // limit of x^8 + x^4 + x^3 + x + 1
+  unsigned char mod = 0x1b; // limit of x^8 + x^4 + x^3 + x + 1
   
   for (size_t i = 0; i < 8; ++i) {
     //1 is a byte value here

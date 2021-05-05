@@ -53,7 +53,8 @@ list(APPEND CORE_SOURCE_FILES   src/core/aes.cc)
 
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
                             src/visualizer/aes_app.cc
-                            src/visualizer/state_displayer.cc)
+                            src/visualizer/state_displayer.cc
+                            src/visualizer/display_helper.cc)
 
 list(APPEND TEST_FILES tests/test_main.cc
                         tests/aes_general_tests.cc

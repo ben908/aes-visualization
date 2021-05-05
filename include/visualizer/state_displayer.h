@@ -1,28 +1,28 @@
 #pragma once
-
-#include <tuple>
-#include "aes_app.h"
 #include <core/aes.h>
 
+#include <glm/vec2.hpp>
 
-using glm::vec2;
-using std::tuple;
+#include "display_helper.h"
 namespace aes {
 
 namespace visualizer {
+using glm::vec2;
+using std::tuple;
 
 /**
  * Class that Displays/Animates the changes between two states.
  */
 class StateDisplayer {
  public:
+  StateDisplayer() = default;
   
   /**
    * Makes an instance of th class
    * @param top_left top left of the area it can draw in
    * @param bottom_right bottom_right of the area it can draw in
    */
-  StateDisplayer();
+  StateDisplayer(size_t width, size_t height);
   
   /**
    * Main method called that shows the change between two states
@@ -40,9 +40,12 @@ class StateDisplayer {
    * @param top_left 
    * @param bottom_right 
    */
-  void SetDimensions(vec2 top_left, vec2 bottom_right);
+  void SetDimensions(size_t width, size_t height);
+  
+  void DisplaySecondaryInfo();
   
  private:
+  DisplayHelper display_helper_;
   
   /**Values for the places the data should be displayed in*/
   vec2 top_left_;
