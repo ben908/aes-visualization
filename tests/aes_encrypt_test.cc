@@ -4,13 +4,6 @@
 #include <iostream>
 namespace aes {
 
-//for (size_t i = 0; i < 4; i++) {
-//for (size_t j = 0; j < 4; ++j) {
-//std::cout << result_location[i + j] << " ";
-//}
-//std::cout << std::endl;
-//}
-
 size_t block_memory_size = 16 * sizeof(unsigned char);
 
 TEST_CASE("128-bit Block Encryption") {
