@@ -21,7 +21,6 @@ void DisplayHelper::DisplayInfoForState(double percent, string message,
   DrawStepBox(current_step);
   DrawMainButtons();
   DrawInstructions();
-  DrawKeyButtons();
 }
 
 DisplayHelper::DisplayHelper(size_t width, size_t height) {
@@ -68,23 +67,26 @@ void DisplayHelper::SetDimensions(size_t width, size_t height) {
   main_buttons_bottom_right_ = vec2(max_X_, progress_bar_height_ + 4 * menu_height_individual_);
 
   instructions_top_left_ = vec2(0, progress_bar_height_ + main_height_);
-  instructions_bottom_right_ = vec2(secondary_width_, max_Y_);
+  instructions_bottom_right_ = vec2(max_X_, max_Y_);
 
-  key_length_buttons_top_left_ = vec2(secondary_width_, progress_bar_height_ + 4 * menu_height_individual_);
-  key_length_buttons_bottom_right_ = vec2(max_X_, max_Y_);
+
   
 }
 
 void DisplayHelper::DrawLoadBar(double percent) {
+  vec2 progress_bottom_right = vec2(loading_bar_bottom_right_.x * percent,
+                                    loading_bar_bottom_right_.y);
   ci::gl::color(ci::Color("green"));
+  ci::gl::drawSolidRect(ci::Rectf(loading_bar_top_left_, progress_bottom_right));
+
+  ci::gl::color(kBorderColor);
   ci::gl::drawStrokedRect(
       ci::Rectf(loading_bar_top_left_, loading_bar_bottom_right_));
-  //TODO::add green % part
 
 }
 
 void DisplayHelper::DrawMessage(string message) {
-  ci::gl::color(ci::Color("red"));
+  ci::gl::color(kBorderColor);
   ci::gl::drawStrokedRect(
       ci::Rectf(message_box_top_left_, message_box_bottom_right_));
   float mid_y = (message_box_bottom_right_.y + message_box_top_left_.y) / 2;
@@ -99,7 +101,7 @@ void DisplayHelper::DrawMessage(string message) {
 }
 
 void DisplayHelper::DrawKey(string key) {
-  ci::gl::color(ci::Color("yellow"));
+  ci::gl::color(kBorderColor);
   ci::gl::drawStrokedRect(
       ci::Rectf(key_box_top_left_, key_box_bottom_right_));
   float mid_y = (key_box_top_left_.y + key_box_bottom_right_.y) / 2;
@@ -114,31 +116,33 @@ void DisplayHelper::DrawKey(string key) {
 }
 
 void DisplayHelper::DrawStepBox(string step) {
-  ci::gl::color(ci::Color("purple"));
+  ci::gl::color(kBorderColor);
   ci::gl::drawStrokedRect(
       ci::Rectf(step_box_top_left_, step_box_bottom_right_));
   DisplayText(step_box_top_left_, step_box_bottom_right_, step);
 }
 
 void DisplayHelper::DrawMainButtons() {
-  ci::gl::color(ci::Color("blue"));
+  ci::gl::color(kBorderColor);
   ci::gl::drawStrokedRect(
       ci::Rectf(main_buttons_top_left_, main_buttons_bottom_right_));
-  float mid_y = (main_buttons_top_left_.y + main_buttons_bottom_right_.y) / 2;
-
+  float one_third_height = (main_buttons_bottom_right_.y - main_buttons_top_left_.y) / 3;
+  float mid_y1 = main_buttons_top_left_.y + one_third_height;
+  float mid_y2 = main_buttons_bottom_right_.y - one_third_height;
   vec2 top_block_top_left = main_buttons_top_left_;
-  vec2 top_block_bottom_right = vec2(main_buttons_bottom_right_.x, mid_y);
-  vec2 low_block_top_left = vec2(main_buttons_top_left_.x, mid_y);
-  vec2 low_block_bottom_right = main_buttons_bottom_right_;
-
-  DisplayText(top_block_top_left, top_block_bottom_right, "Encrypt");
-  DisplayText(low_block_top_left, low_block_bottom_right, "Decrypt");
-  
-
+  vec2 top_block_bottom_right = vec2(main_buttons_bottom_right_.x, mid_y1);
+  vec2 low_block_top_left = vec2(main_buttons_top_left_.x, mid_y1);
+  vec2 low_block_bottom_right = vec2(main_buttons_bottom_right_.x, mid_y2);
+  vec2 low2_block_top_left = vec2(main_buttons_top_left_.x, mid_y2);
+  vec2 low2_block_bottom_right = main_buttons_bottom_right_;
+                                     
+  DisplayText(top_block_top_left, top_block_bottom_right, "Press p or s to pause");
+  DisplayText(low_block_top_left, low_block_bottom_right, "Press c or r to continue");
+  DisplayText(low2_block_top_left, low2_block_bottom_right, "(Drag your mouse around too)");
 }
 
 void DisplayHelper::DrawInstructions() {
-  ci::gl::color(ci::Color("grey"));
+  ci::gl::color(kBorderColor);
   ci::gl::drawStrokedRect(
       ci::Rectf(instructions_top_left_, instructions_bottom_right_));
   float mid_y = (instructions_top_left_.y + instructions_bottom_right_.y) / 2;
@@ -148,17 +152,10 @@ void DisplayHelper::DrawInstructions() {
   vec2 low_block_top_left = vec2(instructions_top_left_.x, mid_y);
   vec2 low_block_bottom_right = instructions_bottom_right_;
 
-  DisplayText(top_block_top_left, top_block_bottom_right, "Click Encrypt or Decrypt to activate the display, click the bit sizes to change the key length");
-  DisplayText(low_block_top_left, low_block_bottom_right, "Adjust the window size if text is too hard to read. Also, drag the mouse on progress bar above");
-
+  DisplayText(top_block_top_left, top_block_bottom_right, "Press e to encrypt at a set rate, press d to decrypt");
+  DisplayText(low_block_top_left, low_block_bottom_right, "Press 1,2,3 to change between 128-bit, 192-bit, or a 256-bit key, respectively");
 }
 
-void DisplayHelper::DrawKeyButtons() {
-  ci::gl::color(ci::Color("red"));
-  ci::gl::drawStrokedRect(
-      ci::Rectf(key_length_buttons_top_left_, key_length_buttons_bottom_right_));
-  //TODO:: display key text
-}
 
 vec2 DisplayHelper::TextLocation(vec2 top_left, vec2 bottom_right) {
   float xAverage = (top_left.x + bottom_right.x) / 2;

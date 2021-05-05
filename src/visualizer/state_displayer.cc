@@ -14,12 +14,11 @@ StateDisplayer::StateDisplayer(size_t width, size_t height) {
 }
 
 void StateDisplayer::DisplayStateChange(
-    tuple<AES::Step, unsigned char *>* currentState,
-    tuple<AES::Step, unsigned char *>* nextState) {
+    tuple<AES::Step, unsigned char *>* currentState) {
   
   DisplaySingleState(top_left_,
                      bottom_right_,
-                     std::get<1>(*nextState));
+                     std::get<1>(*currentState));
   
 }
 
@@ -59,6 +58,8 @@ void StateDisplayer::DisplaySingleState(vec2 top_left,
       std::stringstream ss;
       ss << std::hex << (int)current_state[row + 4 * col];
       string data = ss.str();
+      if (data.size() == 1) data = "0" + data;
+      data = "0x" + data;
       DisplayHelper::DisplayText(pixel_top_left, pixel_bottom_right, data);
     }
   }

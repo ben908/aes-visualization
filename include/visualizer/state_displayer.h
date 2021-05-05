@@ -29,8 +29,7 @@ class StateDisplayer {
    * @param currentState current state, tuple of the step it took to get there and the values
    * @param nextState next state, tuple of step to do and state that should be the result
    */
-  void DisplayStateChange(tuple<AES::Step, unsigned char*>* currentState,
-                          tuple<AES::Step, unsigned char*>* nextState);
+  void DisplayStateChange(tuple<AES::Step, unsigned char*>* currentState);
   
   
   void DisplaySingleState(vec2 top_left, vec2 bottom_right,

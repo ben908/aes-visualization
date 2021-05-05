@@ -46,9 +46,6 @@ class DisplayHelper {
   void DrawStepBox(string current_step);
   void DrawMainButtons();
   void DrawInstructions();
-  void DrawKeyButtons();
-  
-  
   
   size_t max_X_;
   size_t max_Y_;
