@@ -14,6 +14,8 @@ using glm::vec2;
 class AESApp : public ci::app::App {
  public:
   
+  ~AESApp();
+  
   /** Main Constructor */
   AESApp();
 
@@ -26,12 +28,20 @@ class AESApp : public ci::app::App {
   /** used to drag along progress bar */
   void mouseDrag(ci::app::MouseEvent event) override;
   void update() override;
+  void keyDown(ci::app::KeyEvent event) override;
   
   /** constants for layout */
   const size_t kDefaultWindowSize = 875;
   
  private:
+  void MakeRandomInfo();
   
+  size_t current_key_size_;
+  unsigned char* message_;
+  unsigned char* key_;
+  unsigned char* encrypted_message_;
+  std::vector<std::tuple<AES::Step, unsigned char*>*> all_states_;
+
   size_t clock_;
   size_t current_state_;
   bool is_animating_;
@@ -51,7 +61,6 @@ class AESApp : public ci::app::App {
   size_t max_X_;
   size_t max_Y_;
   
-
 };
 
 }  // namespace visualizer

@@ -108,6 +108,7 @@ void AES::EncryptBlock(const unsigned char* in, unsigned char* out) {
 
 
 void AES::Decrypt(unsigned char* in, unsigned char* out, unsigned char* key) {
+  ClearAllStates();
   key_ = key;
   MakeKeyExpansion(key_, expanded_key_);
   DecryptBlock(in, out);
@@ -119,25 +120,33 @@ void AES::DecryptBlock(const unsigned char *in, unsigned char *out) {
       state_[i][j] =  in[i + 4 * j];
     }
   }
-  
+  StoreState(Start, state_);
   AddRoundKey(expanded_key_ + num_rounds_ * 4 * block_size_);
-  
+  StoreState(RoundKeyAddition, state_);
   for (size_t current_round = num_rounds_ - 1; current_round >= 1; --current_round) {
     InvSubBytes();
+    StoreState(InvByteSubstitution, state_);
     InverseShiftRows();
+    StoreState(InvRowShift, state_);
     AddRoundKey(expanded_key_ + current_round * 4 * block_size_);
+    StoreState(RoundKeyAddition, state_);
     InverseMixColumns();
+    StoreState(InvColumnMix, state_);
   }
   
   InvSubBytes();
+  StoreState(InvByteSubstitution, state_);
   InverseShiftRows();
+  StoreState(InvRowShift, state_);
   AddRoundKey(expanded_key_);
+  StoreState(RoundKeyAddition, state_);
   
   for (size_t i = 0; i < 4; i++) {
     for (size_t j = 0; j < block_size_; j++) {
       out[i + 4 * j] = state_[i][j];
     }
   }
+  StoreState(End, state_);
 }
 
 void AES::SubBytes() {
