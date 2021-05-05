@@ -17,6 +17,12 @@ class AES {
    * to say what size key using, 128, 196, or 256, and will set constants then
    */
   static const size_t kColumnCount = 4;
+  /**
+   * Numbers of bits per hex value
+   */
+  static const size_t kBitsPerHexValue = 4;
+  
+  static const size_t kSBoxDimensionSize = 16;
   
   /**
    * holds, all possible steps the algorithm takes, used to recording state history

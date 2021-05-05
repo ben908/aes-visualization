@@ -24,12 +24,10 @@ class DisplayHelper {
 
   static constexpr double kProgressBarHeightPercent = 0.09;
   static constexpr double kMainHeightPercent = 0.76;
-  static constexpr double kBottomButtonHeightPercent = 0.15;
   static constexpr double kMenuHeightIndividualPercent = 0.19;
 
   static constexpr double kMainWidthPercent = 0.7;
-  static constexpr double kSecondaryWidthPercent = 0.85;
-  static constexpr double kButtonWidthPercent = 0.5;
+
   
   /**
    * Default constructor

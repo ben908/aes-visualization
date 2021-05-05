@@ -1,4 +1,5 @@
-This is an implementation of the AES encryption algorithm. If running the app,
+This is an implementation of the AES encryption algorithm, as
+specified by NIST, here: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf. If running the app,
 the UI has some information in it. But here are all the commands you have,
 which are completed through either the keyboard or the mouse
 
@@ -31,11 +32,9 @@ To compile the app, run cmake, with the attacked `CMakeLists.txt`
 All messages are the same length, since the AES algorithm, 
 despite the key length, encrypts messages in batches of 128-bits.
 
+On startup, the default is a 128-bit key, which can be easily changed
+the keyboard.
+
 In the visualization all information is in Hex, not decimal,
 including state values, the message, and the key
 
-
-
-Fill this in before the final project deadline. Someone who has _no familiarity_ with your project should be able to read this and understand:
-* what your project does
-* how to set it up and run it

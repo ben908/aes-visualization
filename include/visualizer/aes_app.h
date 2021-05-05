@@ -60,7 +60,7 @@ class AESApp : public ci::app::App {
   /** Helper that displays most of the app UI */
   StateDisplayer state_displayer_;
   
-  /** Main algorithm */
+  /** Main algorithm, defaults to a 128-bit key */
   AES aes_ = AES(128);
   
   /** Called when the window size changes */
