@@ -8,6 +8,11 @@ namespace aes {
 
 namespace visualizer {
 
+const ci::Color DisplayHelper::kBackgroundColor = "white";
+const ci::Color DisplayHelper::kBorderColor = "black";
+const ci::Color8u DisplayHelper::kProgressBarColor = ci::Color8u(0, 204, 0);
+const std::string DisplayHelper::kFontName = "Arial";
+
 void DisplayHelper::DisplayInfoForState(double percent, string message,
                                         string key, string current_step) {
   DrawLoadBar(percent);
@@ -82,30 +87,53 @@ void DisplayHelper::DrawMessage(string message) {
   ci::gl::color(ci::Color("red"));
   ci::gl::drawStrokedRect(
       ci::Rectf(message_box_top_left_, message_box_bottom_right_));
-  //TODO:: display message text
-
+  float mid_y = (message_box_bottom_right_.y + message_box_top_left_.y) / 2;
+  
+  vec2 top_block_top_left = message_box_top_left_;
+  vec2 top_block_bottom_right = vec2(message_box_bottom_right_.x, mid_y);
+  vec2 low_block_top_left = vec2(message_box_top_left_.x, mid_y);
+  vec2 low_block_bottom_right = message_box_bottom_right_;
+  
+  DisplayText(top_block_top_left, top_block_bottom_right, "Original Message:");
+  DisplayText(low_block_top_left, low_block_bottom_right, message);
 }
 
 void DisplayHelper::DrawKey(string key) {
   ci::gl::color(ci::Color("yellow"));
   ci::gl::drawStrokedRect(
       ci::Rectf(key_box_top_left_, key_box_bottom_right_));
-  //TODO:: display key text
+  float mid_y = (key_box_top_left_.y + key_box_bottom_right_.y) / 2;
+  
+  vec2 top_block_top_left = key_box_top_left_;
+  vec2 top_block_bottom_right = vec2(key_box_bottom_right_.x, mid_y);
+  vec2 low_block_top_left = vec2(key_box_top_left_.x, mid_y);
+  vec2 low_block_bottom_right = key_box_bottom_right_;
 
+  DisplayText(top_block_top_left, top_block_bottom_right, "Current Key:");
+  DisplayText(low_block_top_left, low_block_bottom_right, key);
 }
 
 void DisplayHelper::DrawStepBox(string step) {
   ci::gl::color(ci::Color("purple"));
   ci::gl::drawStrokedRect(
       ci::Rectf(step_box_top_left_, step_box_bottom_right_));
-  //TODO:: display key text
+  DisplayText(step_box_top_left_, step_box_bottom_right_, step);
 }
 
 void DisplayHelper::DrawMainButtons() {
   ci::gl::color(ci::Color("blue"));
   ci::gl::drawStrokedRect(
       ci::Rectf(main_buttons_top_left_, main_buttons_bottom_right_));
-  //TODO:: display key text
+  float mid_y = (main_buttons_top_left_.y + main_buttons_bottom_right_.y) / 2;
+
+  vec2 top_block_top_left = main_buttons_top_left_;
+  vec2 top_block_bottom_right = vec2(main_buttons_bottom_right_.x, mid_y);
+  vec2 low_block_top_left = vec2(main_buttons_top_left_.x, mid_y);
+  vec2 low_block_bottom_right = main_buttons_bottom_right_;
+
+  DisplayText(top_block_top_left, top_block_bottom_right, "Encrypt");
+  DisplayText(low_block_top_left, low_block_bottom_right, "Decrypt");
+  
 
 }
 
@@ -113,7 +141,15 @@ void DisplayHelper::DrawInstructions() {
   ci::gl::color(ci::Color("grey"));
   ci::gl::drawStrokedRect(
       ci::Rectf(instructions_top_left_, instructions_bottom_right_));
-  //TODO:: display key text
+  float mid_y = (instructions_top_left_.y + instructions_bottom_right_.y) / 2;
+
+  vec2 top_block_top_left = instructions_top_left_;
+  vec2 top_block_bottom_right = vec2(instructions_bottom_right_.x, mid_y);
+  vec2 low_block_top_left = vec2(instructions_top_left_.x, mid_y);
+  vec2 low_block_bottom_right = instructions_bottom_right_;
+
+  DisplayText(top_block_top_left, top_block_bottom_right, "Click Encrypt or Decrypt to activate the display, click the bit sizes to change the key length");
+  DisplayText(low_block_top_left, low_block_bottom_right, "Adjust the window size if text is too hard to read. Also, drag the mouse on progress bar above");
 
 }
 
@@ -122,6 +158,26 @@ void DisplayHelper::DrawKeyButtons() {
   ci::gl::drawStrokedRect(
       ci::Rectf(key_length_buttons_top_left_, key_length_buttons_bottom_right_));
   //TODO:: display key text
+}
+
+vec2 DisplayHelper::TextLocation(vec2 top_left, vec2 bottom_right) {
+  float xAverage = (top_left.x + bottom_right.x) / 2;
+  float yLocation = top_left.y;
+
+  return vec2(xAverage, yLocation);
+}
+
+void DisplayHelper::DisplayText(vec2 topLeftCorner,
+                                      vec2 bottomRightCorner,
+                                      string text) {
+  
+  
+  const float fontSize = bottomRightCorner.y - topLeftCorner.y;
+  const ci::Font font = ci::Font(kFontName, fontSize * 0.25);
+  ci::gl::drawStringCentered(text,
+                             TextLocation(topLeftCorner, bottomRightCorner),
+                             kBorderColor,
+                             font);
 }
 
 

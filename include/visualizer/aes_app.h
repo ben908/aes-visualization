@@ -13,10 +13,6 @@ using glm::vec2;
 
 class AESApp : public ci::app::App {
  public:
-  static const ci::Color kBackgroundColor;
-  static const ci::Color kBorderColor;
-  static const ci::Color8u kProgressBarColor;
-  static const std::string kFontName;
   
   /** Main Constructor */
   AESApp();

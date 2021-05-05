@@ -1,7 +1,10 @@
 #pragma once
 
+#include <cinder/Color.h>
+
 #include <glm/vec2.hpp>
 #include <string>
+
 namespace aes {
 
 namespace visualizer {
@@ -10,6 +13,11 @@ using std::string;
 
 class DisplayHelper {
  public:
+  static const ci::Color kBackgroundColor;
+  static const ci::Color kBorderColor;
+  static const ci::Color8u kProgressBarColor;
+  static const std::string kFontName;
+  
   DisplayHelper() = default;
   
   DisplayHelper(size_t width, size_t height);
@@ -25,6 +33,12 @@ class DisplayHelper {
   vec2 GetStateDisplayAreaBottomRight();
   
  private:
+  
+  vec2 TextLocation(vec2 top_left, vec2 bottom_right);
+  
+  void DisplayText(vec2 top_left_corner,
+                   vec2 bottom_right_corner,
+                   string text);
   void DrawLoadBar(double percent);
   void DrawMessage(string message);
   void DrawKey(string key);
@@ -32,6 +46,8 @@ class DisplayHelper {
   void DrawMainButtons();
   void DrawInstructions();
   void DrawKeyButtons();
+  
+  
   
   size_t max_X_;
   size_t max_Y_;

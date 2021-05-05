@@ -5,10 +5,6 @@ namespace aes {
 
 namespace visualizer {
 
-const ci::Color AESApp::kBackgroundColor = "white";
-const ci::Color AESApp::kBorderColor = "black";
-const ci::Color8u AESApp::kProgressBarColor = ci::Color8u(0, 204, 0);
-const std::string AESApp::kFontName = "Arial";
 
 AESApp::AESApp() {
   ci::app::setWindowSize((int) kDefaultWindowSize, (int) kDefaultWindowSize);
@@ -27,26 +23,15 @@ void AESApp::draw() {
     max_X_ = ci::app::getWindowWidth();
     UpdateSizing();
   }
-  ci::gl::clear(kBackgroundColor);
+  ci::gl::clear(DisplayHelper::kBackgroundColor);
   
   DrawMainShapes();
 
 }
 
-//const void AESApp::DisplayHorizontalLabel(const vec2& topLeftCorner,
-//                                                  const vec2& bottomRightCorner,
-//                                                  const string& text) {
-//  const float fontSize = bottomRightCorner.y - topLeftCorner.y;
-//  const ci::Font font = ci::Font(IdealGasApp::kFontName, fontSize);
-//  ci::gl::drawStringCentered(text,
-//                             TextLocation(topLeftCorner, bottomRightCorner),
-//                             IdealGasApp::kTextColor,
-//                             font);
-//}
-
 void AESApp::DrawMainShapes() {
 
-  ci::gl::color(AESApp::kBackgroundColor);
+  ci::gl::color(DisplayHelper::kBackgroundColor);
 //  ci::gl::drawStrokedRect(ci::Rectf(topLeftCorner, bottomRightCorner));
   state_displayer_.DisplaySecondaryInfo();
   
