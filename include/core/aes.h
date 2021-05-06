@@ -13,18 +13,29 @@ namespace aes {
 class AES {
  public:
   /**
-   * Constants for 128-bit encryption, will add switch eventually to constructor
-   * to say what size key using, 128, 196, or 256, and will set constants then
+   * Constants for the algorithm that is the same for all key lengths
    */
-  static const size_t kColumnCount = 4;
-  /**
-   * Numbers of bits per hex value
-   */
-  static const size_t kBitsPerHexValue = 4;
-  static const size_t kSBoxDimensionSize = 16;
+  static const size_t kColumnCount =        4;
+  static const size_t kBitsPerHexValue =    4;
+  static const size_t kSBoxDimensionSize =  16;
   
   /**
-   * holds, all possible steps the algorithm takes, used to recording state history
+   * Constants that change for different key lengths
+   */
+   static const size_t kSmallKeySize =      128;
+   static const size_t kMediumKeySize =     192;
+   static const size_t kLargeKeySize =      256;
+   static const size_t k128NumRounds =      10;
+   static const size_t k192NumRounds =      12;
+   static const size_t k256NumRounds =      14;
+   static const size_t k128BlockLength =    4;
+   static const size_t k192BlockLength =    6;
+   static const size_t k256BlockLength =    8;
+   
+  
+  /**
+   * holds all steps the algorithm takes,
+   * used to record state history for app
    */
   enum Step {
     Start,
@@ -60,7 +71,7 @@ class AES {
    * Makes an instance of the class
    * @param length of the key to make, either 128-bit, 192-bit, or 256-bit
    */
-  AES(int keyLength);
+  AES(size_t key_length);
   
   /**
    * Encrypts a block of chars
@@ -120,7 +131,7 @@ class AES {
    * @param val1 second value
    * @return result as unsigned char
    */
-  static const unsigned char FiniteMultiply(unsigned char val0, unsigned char val1);
+  static unsigned char FiniteMultiply(unsigned char val0, unsigned char val1);
   
  private:
   /**
@@ -186,7 +197,7 @@ class AES {
    * @param to_change word to rotate
    * @param amount amount to rotate
    */
-  static void RotateConstant(unsigned char *to_change, int amount);
+  static void RotateConstant(unsigned char *to_change, size_t amount);
   
   /**
    * xoring two words of the expanded key
@@ -230,9 +241,9 @@ class AES {
   /** Values stored throughout encryption*/
   unsigned char *key_;
   unsigned char *expanded_key_;
-  size_t key_block_length_; //Nk
-  size_t block_size_; //Nb
-  size_t num_rounds_; //Nr
+  size_t key_block_length_;
+  size_t block_size_;
+  size_t num_rounds_;
 };
 
 }  // namespace aes

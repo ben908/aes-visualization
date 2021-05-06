@@ -19,7 +19,6 @@ void StateDisplayer::DisplayStateChange(
   DisplaySingleState(top_left_,
                      bottom_right_,
                      std::get<1>(*currentState));
-  
 }
 
 void StateDisplayer::SetDimensions(size_t width, size_t height) {
@@ -63,8 +62,6 @@ void StateDisplayer::DisplaySingleState(const vec2& top_left,
       DisplayHelper::DisplayText(pixel_top_left, pixel_bottom_right, data);
     }
   }
-  
-  
 }
 
 } //namespace visualizer

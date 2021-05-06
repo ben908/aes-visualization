@@ -18,7 +18,7 @@ AES::AES() {
       [kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
 }
 
-AES::AES(int keyLength) {
+AES::AES(size_t key_length) {
   //these magic numbers are from the aes specification from NIST
   block_size_ = 4;
   state_ = new unsigned char *[kBitsPerHexValue];
@@ -27,25 +27,22 @@ AES::AES(int keyLength) {
     state_[i] = state_[0] + block_size_ * i;
   }
   
-  if (keyLength == 128) {
-    key_block_length_ = 4;
-    num_rounds_ = 10;
-    expanded_key_ = new unsigned char
-        [kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
+  if (key_length == kSmallKeySize) {
+    key_block_length_ =   k128BlockLength;
+    num_rounds_ =         k128NumRounds;
+    expanded_key_ =       new unsigned char[kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
     return;
   }
-  if (keyLength == 192) {
-    key_block_length_ = 6;
-    num_rounds_ = 12;
-    expanded_key_ = new unsigned char
-        [kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
+  if (key_length == kMediumKeySize) {
+    key_block_length_ =   k192BlockLength;
+    num_rounds_ =         k192NumRounds;
+    expanded_key_ =       new unsigned char[kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
     return;
   }
-  if (keyLength == 256) {
-    key_block_length_ = 8;
-    num_rounds_ = 14;
-    expanded_key_ = new unsigned char
-        [kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
+  if (key_length == kLargeKeySize) {
+    key_block_length_ =   k256BlockLength;
+    num_rounds_ =         k256NumRounds;
+    expanded_key_ =       new unsigned char[kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
     return;
   }
   throw std::bad_function_call();
@@ -259,11 +256,11 @@ void AES::InverseMixColumn(size_t column) {
 }
 
 //multiplication of val0 and val1 in the galois field
-const unsigned char AES::FiniteMultiply(unsigned char val1, unsigned char val2) {
+unsigned char AES::FiniteMultiply(unsigned char val1, unsigned char val2) {
   //implementation inspired by https://en.wikipedia.org/wiki/Finite_field_arithmetic
   
   unsigned char p = 0; //end product
-  unsigned char single_limit = 0x80; // limiting bit individual bit value (half ff)
+  unsigned char single_limit = 0x80; // limiting byte value (half ff)
   unsigned char high_byte = 0; //value from second val
   unsigned char mod = 0x1b; // limit of x^8 + x^4 + x^3 + x + 1
   
@@ -294,32 +291,32 @@ void AES::MakeKeyExpansion(const unsigned char key[], unsigned char expanded_key
   }
   i = kBitsPerHexValue * key_block_length_;
   
-  unsigned char tmpWord[4];
-  unsigned char rotateWord[4];
-  while (i < 4 * block_size_ * (num_rounds_ + 1)) {
-    tmpWord[0] = expanded_key[i - 4 + 0];
-    tmpWord[1] = expanded_key[i - 4 + 1];
-    tmpWord[2] = expanded_key[i - 4 + 2];
-    tmpWord[3] = expanded_key[i - 4 + 3];
+  unsigned char tmpWord[kBitsPerHexValue];
+  unsigned char rotateWord[kBitsPerHexValue];
+  while (i < kBitsPerHexValue * block_size_ * (num_rounds_ + 1)) {
+    tmpWord[0] = expanded_key[i - kColumnCount + 0];
+    tmpWord[1] = expanded_key[i - kColumnCount + 1];
+    tmpWord[2] = expanded_key[i - kColumnCount + 2];
+    tmpWord[3] = expanded_key[i - kColumnCount + 3];
 
     if (i / 4 % key_block_length_ == 0) {
       RotWord(tmpWord);
       SubWord(tmpWord);
-      RotateConstant(rotateWord, i / (key_block_length_ * 4));
+      RotateConstant(rotateWord, i / (key_block_length_ * kBitsPerHexValue));
       xOrWords(tmpWord, rotateWord, tmpWord);
-    } else if (key_block_length_ > 6 && i / 4 % key_block_length_ == 4){
+    } else if (key_block_length_ > 6 && i / kBitsPerHexValue % key_block_length_ == kBitsPerHexValue){
       SubWord(tmpWord);
     }
 
-    expanded_key[i + 0] = expanded_key[i + 0 - 4 * key_block_length_] ^ tmpWord[0];
-    expanded_key[i + 1] = expanded_key[i + 1 - 4 * key_block_length_] ^ tmpWord[1];
-    expanded_key[i + 2] = expanded_key[i + 2 - 4 * key_block_length_] ^ tmpWord[2];
-    expanded_key[i + 3] = expanded_key[i + 3 - 4 * key_block_length_] ^ tmpWord[3];
+    expanded_key[i + 0] = expanded_key[i + 0 - kColumnCount * key_block_length_] ^ tmpWord[0];
+    expanded_key[i + 1] = expanded_key[i + 1 - kColumnCount * key_block_length_] ^ tmpWord[1];
+    expanded_key[i + 2] = expanded_key[i + 2 - kColumnCount * key_block_length_] ^ tmpWord[2];
+    expanded_key[i + 3] = expanded_key[i + 3 - kColumnCount * key_block_length_] ^ tmpWord[3];
     i += 4;
   }
 }
 
-void AES::RotateConstant(unsigned char *to_change, int amount) {
+void AES::RotateConstant(unsigned char *to_change, size_t amount) {
   unsigned char temp = 1;
   for (size_t i = 0; i < (size_t) amount - 1; ++i) {
     temp = (temp << 1) ^ (((temp >> 7) & 1) * 0x1b); //values from finite multiply
@@ -401,7 +398,5 @@ std::string AES::EnumToString(const AES::Step& step) {
       return "Invalid Step";
   }
 }
-
-
 
 }  // namespace aes

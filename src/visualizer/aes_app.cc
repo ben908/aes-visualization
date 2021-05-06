@@ -13,38 +13,39 @@ AESApp::~AESApp() {
 }
 
 AESApp::AESApp() {
-  ci::app::setWindowSize(2 * kDefaultWindowSize, 0.5 * kDefaultWindowSize);
-  state_displayer_ = StateDisplayer(kDefaultWindowSize, kDefaultWindowSize);
-  clock_ = 0;
-  current_state_ = 0;
-  current_key_size_ = 128;
+  ci::app::setWindowSize(kSizeIncreaseRatio * kDefaultWindowSize,
+                         kSizeReduceRatio * kDefaultWindowSize);
+  state_displayer_ =    StateDisplayer(kDefaultWindowSize, kDefaultWindowSize);
+  clock_ =              0;
+  current_state_ =      0;
+  current_key_size_ =   kDefaultKeySize;
   MakeRandomInfo();
-  is_animating_ = false;
-  is_encrypting_ = true;
+  is_animating_ =       false;
+  is_encrypting_ =      true;
 }
 
 void AESApp::MakeRandomInfo() {
-  message_ = new unsigned char[16];
-  for (size_t i = 0; i < 16; ++i) message_[i] = (unsigned char) rand();
+  message_ = new unsigned char[kMessageSize];
+  for (size_t i = 0; i < kMessageSize; ++i) message_[i] = (unsigned char) rand();
   
-  encrypted_message_ = new unsigned char[16];
-  if (current_key_size_ == 128) {
-    aes_ = new AES(128);
-    key_size_ = 16;
-    key_ = new unsigned char[16];
-    for (size_t i = 0; i < 16; ++i) key_[i] = (unsigned char) rand();
+  encrypted_message_ = new unsigned char[kMessageSize];
+  if (current_key_size_ == kDefaultKeySize) {
+    aes_ =        new AES(kDefaultKeySize);
+    key_size_ =   kSmallKeyByteCount;
+    key_ =        new unsigned char[kSmallKeyByteCount];
+    for (size_t i = 0; i < kSmallKeyByteCount; ++i) key_[i] = (unsigned char) rand();
   }
-  if (current_key_size_ == 192) {
-    aes_ = new AES(192);
-    key_size_ = 24;
-    key_ = new unsigned char[24];
-    for (size_t i = 0; i < 24; ++i) key_[i] = (unsigned char) rand();
+  if (current_key_size_ == kMediumKeySize) {
+    aes_ =        new AES(kMediumKeySize);
+    key_size_ =   kMediumKeyByteCount;
+    key_ =        new unsigned char[kMediumKeyByteCount];
+    for (size_t i = 0; i < kMediumKeyByteCount; ++i) key_[i] = (unsigned char) rand();
   }
-  if (current_key_size_ == 256) {
-    aes_ = new AES(256);
-    key_size_ = 32;
-    key_ = new unsigned char[32];
-    for (size_t i = 0; i < 32; ++i) key_[i] = (unsigned char) rand();
+  if (current_key_size_ == kLargeKeySize) {
+    aes_ =        new AES(kLargeKeySize);
+    key_size_ =   kLargeKeyByteCount;
+    key_ =        new unsigned char[kLargeKeyByteCount];
+    for (size_t i = 0; i < kLargeKeyByteCount; ++i) key_[i] = (unsigned char) rand();
   }
   aes_->Encrypt(message_, encrypted_message_, key_);
   all_states_ = aes_->GetAllState();
@@ -68,7 +69,8 @@ void AESApp::draw() {
 }
 
 void AESApp::StateCheck() {
-  if (current_state_ >= all_states_.size()) {
+  //have to cast to int since -1 >= positive values of .size(), which are size_type
+  if (current_state_ >= (int) all_states_.size()) {
     is_animating_ = false;
     current_state_ = all_states_.size() - 1;
   }
@@ -81,7 +83,7 @@ void AESApp::StateCheck() {
 void AESApp::DrawMainShapes() {
   double percent = (double_t) current_state_ / ((double_t) all_states_.size() - 1.0);
   std::stringstream ss;
-  for (size_t i = 0; i < 16; ++i) { //for message
+  for (size_t i = 0; i < kMessageSize; ++i) { //for message
     ss << " " << std::hex << (int)message_[i];
   }
   string message = ss.str();
@@ -141,24 +143,24 @@ void AESApp::keyDown(ci::app::KeyEvent event) {
   switch (event.getCode()) {
     case ci::app::KeyEvent::KEY_LEFT:
       current_state_--;
-      is_animating_ = false;
-      is_encrypting_ = false;
+      is_animating_ =   false;
+      is_encrypting_ =  false;
       break;
       
     case ci::app::KeyEvent::KEY_RIGHT:
       current_state_++;
-      is_animating_ = false;
-      is_encrypting_ = true;
+      is_animating_ =   false;
+      is_encrypting_ =  true;
       break;
       
     case ci::app::KeyEvent::KEY_e:
-      is_animating_ = true;
-      is_encrypting_ = true;
+      is_animating_ =   true;
+      is_encrypting_ =  true;
       break;
 
     case ci::app::KeyEvent::KEY_d:
-      is_animating_ = true;
-      is_encrypting_ = false;
+      is_animating_ =   true;
+      is_encrypting_ =  false;
       break;
 
     case ci::app::KeyEvent::KEY_p:
@@ -172,17 +174,17 @@ void AESApp::keyDown(ci::app::KeyEvent event) {
       break;
       
     case ci::app::KeyEvent::KEY_1:
-      current_key_size_ = 128;
+      current_key_size_ = kDefaultKeySize;
       Reset();
       break;
       
     case ci::app::KeyEvent::KEY_2:
-      current_key_size_ = 192;
+      current_key_size_ = kMediumKeySize;
       Reset();
       break;
       
     case ci::app::KeyEvent::KEY_3:
-      current_key_size_ = 256;
+      current_key_size_ = kLargeKeySize;
       Reset();
       break;
   }

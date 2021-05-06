@@ -32,6 +32,7 @@ DisplayHelper::DisplayHelper(size_t width, size_t height) {
 vec2 DisplayHelper::GetStateDisplayAreaTopLeft() {
   return glm::vec2(0, progress_bar_height_);
 }
+
 vec2 DisplayHelper::GetStateDisplayAreaBottomRight() {
   return glm::vec2(main_width_, progress_bar_height_ + main_height_);
 }
@@ -63,9 +64,6 @@ void DisplayHelper::SetDimensions(size_t width, size_t height) {
 
   instructions_top_left_ =      vec2(0, progress_bar_height_ + main_height_);
   instructions_bottom_right_ =  vec2(max_X_, max_Y_);
-
-
-  
 }
 
 void DisplayHelper::DrawLoadBar(double percent) const {
@@ -158,8 +156,6 @@ vec2 DisplayHelper::TextLocation(const vec2& top_left,
 void DisplayHelper::DisplayText(const vec2& top_left,
                                 const vec2& bottom_right,
                                 const string& text) {
-  
-  
   const float font_size = bottom_right.y - top_left.y;
   const ci::Font font = ci::Font(kFontName, font_size * 0.5);
   ci::gl::drawStringCentered(text,
@@ -167,7 +163,6 @@ void DisplayHelper::DisplayText(const vec2& top_left,
                              kBorderColor,
                              font);
 }
-
 
 } //namespace visualizer
 
