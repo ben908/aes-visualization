@@ -5,19 +5,40 @@
 #include "constants.h"
 
 namespace aes {
-    
+
+/**
+ * Implementation of the AES algorithm, all variants key-lengths, as
+ * specified by the national institute of standards and technology 
+ */
 class AES {
  public:
   /**
-   * Constants for 128-bit encryption, will add switch eventually to constructor
-   * to say what size key using, 128, 196, or 256, and will set constants then
+   * Constants for the algorithm that is the same for all key lengths
    */
-  static const size_t kColumnCount = 4;
+  static const size_t kColumnCount =        4;
+  static const size_t kBitsPerHexValue =    4;
+  static const size_t kSBoxDimensionSize =  16;
+  static const size_t kBlockSize =          4;
   
   /**
-   * holds, all possible steps the algorithm takes, used to recording state history
+   * Constants that change for different key lengths
    */
-  enum step {
+   static const size_t kSmallKeySize =      128;
+   static const size_t kMediumKeySize =     192;
+   static const size_t kLargeKeySize =      256;
+   static const size_t k128NumRounds =      10;
+   static const size_t k192NumRounds =      12;
+   static const size_t k256NumRounds =      14;
+   static const size_t k128BlockLength =    4;
+   static const size_t k192BlockLength =    6;
+   static const size_t k256BlockLength =    8;
+   
+  
+  /**
+   * holds all steps the algorithm takes,
+   * used to record state history for app
+   */
+  enum Step {
     Start,
     End,
     ByteSubstitution,
@@ -28,11 +49,30 @@ class AES {
     InvRowShift,
     InvColumnMix,
   };
-
+  
+  /**
+   * Helper that returns a string value for a given step enum, used in app UI
+   * @param step enum to turn to string
+   * @return string the represents the enum
+   */
+  static std::string EnumToString(const Step& step);
+  
+  /**
+   * destructor that deletes all heap allocated memory used by this
+   * implementation
+   */
+  ~AES();
+  
+  /** 
+   * Default Constructor, creates an instance of aes with 128-bit key 
+   */
+  AES();
+  
   /**
    * Makes an instance of the class
+   * @param length of the key to make, either 128-bit, 192-bit, or 256-bit
    */
-  AES(int keyLength);
+  AES(size_t key_length);
   
   /**
    * Encrypts a block of chars
@@ -40,7 +80,7 @@ class AES {
    * @param out, pointer message will be saved to
    * @param key, key as char array pointer 
    */
-  void Encrypt(unsigned char* in, unsigned char* out, unsigned char* key);
+  void Encrypt(const unsigned char* in, unsigned char* out, unsigned char* key);
   
   /**
    * Encrypts a 128-bit block of data
@@ -49,14 +89,22 @@ class AES {
    * @return pointer to the result
    */
   void EncryptBlock(const unsigned char* in, unsigned char* out);
-
+  
+  /**
+   * Encrypts a block of chars
+   * @param in, original message
+   * @param out, pointer message will be saved to
+   * @param key, key as char array pointer 
+   */
+  void Decrypt(const unsigned char* in, unsigned char* out, unsigned char* key);
+  
   /**
    * Decrypts a 128-bit block data
    * @param message message to decrypt 
    * @param key key, atm just 128bit, planning to add 196 and 256 bit
    * @return pointer to the result
    */
-  void DecryptBlock(const unsigned char in[], unsigned char out[]);
+  void DecryptBlock(const unsigned char* in, unsigned char* out);
 
   /**
    * method that sets the key, used for testing
@@ -69,24 +117,13 @@ class AES {
    * @return  pointer to the key's location
    */
   unsigned char* GetKeyExpansion();
-  
+
   /**
-   * allows the current state block to be changed, used for testing
-   * @param state 
+   * Getter for the state history of the encryption or decryption process
+   * @return vector of tuples, first val is the step that was needed to get to
+   * the state in the second position of the tuple
    */
-  void SetState(unsigned char state[4][4]);
-  
-  /**
-   * Gets the current state block
-   * @return the state 
-   */
-  unsigned char* GetState();
-  
-  /**
-   * Helpful debugger that lets me print the state as the program executes
-   * so i can check each step is going well.
-   */
-  void PrintState();
+  const std::vector<std::tuple<Step, unsigned char*>*>& GetAllState();
   
   /**
    * Helper method that multiplies two unsigned char values in the Galois
@@ -101,8 +138,9 @@ class AES {
   /**
    * variable that holds the history of all states
    */
-  std::vector<std::tuple<step, unsigned char*>> all_states_; 
+  std::vector<std::tuple<Step, unsigned char*>*> all_states_; 
   
+  void StoreState(Step step, unsigned char**);
   /**
    * Helper that makes the key expansion
    * @param key original key
@@ -160,14 +198,7 @@ class AES {
    * @param to_change word to rotate
    * @param amount amount to rotate
    */
-  static void RotateConstant(unsigned char *to_change, int amount);
-  
-  /**
-   * mutlplication on field at set point
-   * @param in value to mutiple x1b by
-   * @return value
-   */
-  static unsigned char xtime(unsigned char in);
+  static void RotateConstant(unsigned char *to_change, size_t amount);
   
   /**
    * xoring two words of the expanded key
@@ -197,6 +228,11 @@ class AES {
    * shifts all rows
    */
   void InvSubBytes();
+  
+  /**
+   * deletes the saved state info
+   */
+  void ClearAllStates();
 
   /**
    * Current State
@@ -204,12 +240,11 @@ class AES {
   unsigned char **state_;
   
   /** Values stored throughout encryption*/
-  unsigned char *message_;
   unsigned char *key_;
   unsigned char *expanded_key_;
-  size_t key_block_length_; //Nk
-  size_t block_size_; //Nb
-  size_t num_rounds_; //Nr
+  size_t key_block_length_;
+  size_t block_size_;
+  size_t num_rounds_;
 };
 
 }  // namespace aes

@@ -1,10 +1,7 @@
 #include <core/aes.h>
 
 int main() {
-    
-  //todo: set up main
-//  aes::AES aes = aes::AES();
-//  aes.Encrypt("f34481ec3cc627bacd5dc3fb08f273e6");
+  //to see that this works, please use the tests or the app
   
   return 0;
 }

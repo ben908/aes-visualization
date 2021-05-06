@@ -14,13 +14,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Warning flags
-if(MSVC)
-    # warning level 3 and all warnings as errors
-    add_compile_options(/W3 /WX)
-else()
-    # lots of warnings and all warnings as errors
-    add_compile_options(-Wall -Wpedantic -Werror)
-endif()
+#if(MSVC)
+#    # warning level 3 and all warnings as errors
+#    add_compile_options(/W3 /WX)
+#else()
+#    # lots of warnings and all warnings as errors
+#    add_compile_options(-Wall -Wpedantic -Werror)
+#endif()
 
 # FetchContent added in CMake 3.11, downloads during the configure step
 include(FetchContent)
@@ -53,13 +53,17 @@ list(APPEND CORE_SOURCE_FILES   src/core/aes.cc)
 
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
                             src/visualizer/aes_app.cc
-                            src/visualizer/state_displayer.cc)
+                            src/visualizer/state_displayer.cc
+                            src/visualizer/display_helper.cc)
 
-list(APPEND TEST_FILES tests/aes_test.cc
-                        tests/test_main.cc)
+list(APPEND TEST_FILES tests/test_main.cc
+                        tests/aes_general_tests.cc
+                        tests/aes_individual_component_test.cc
+                        tests/aes_encrypt_test.cc
+                        tests/aes_decrypt_test.cc)
 
-add_executable(train-model apps/aes_main.cc ${CORE_SOURCE_FILES})
-target_include_directories(train-model PRIVATE include)
+add_executable(aes-model apps/aes_main.cc ${CORE_SOURCE_FILES})
+target_include_directories(aes-model PRIVATE include)
 
 ci_make_app(
         APP_NAME        aes-visualized
