@@ -33,9 +33,12 @@ to previous or future states depending on the mouse's
   x-position is relative to the progress bar
   
 To compile the app, run cmake, with the attacked `CMakeLists.txt`. To do so
-run with the proper value for your computer for `<cinder file projects folder>`:
+run the commands below, with the proper location 
+for your computer for `<cinder projects folder>`:
 ```
-cmake.exe --build <cinder file projects folder>\final-project-ben908\cmake-build-debug --target aes-visualized
+cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - NMake Makefiles" <cinder projects folder>\final-project-ben908
+cmake.exe --build <cinder projects folder>\final-project-ben908\cmake-build-debug --target aes-visualized
+<cinder projects folder>\final-project-ben908\cmake-build-debug\Debug\aes-visualized\aes-visualized.exe
 ```
 All messages are the same length, 128-bits, since the AES algorithm, 
 despite the key length, encrypts messages in batches of 128-bits.
