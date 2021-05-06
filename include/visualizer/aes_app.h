@@ -62,7 +62,7 @@ class AESApp : public ci::app::App {
   bool is_encrypting_;
   size_t key_size_;
   
-  /** History of all states that are used to encypt a single block */
+  /** History of all states that are used to encrypt a single block */
   std::vector<std::tuple<AES::Step, unsigned char*>*> all_states_;
 
   /** Internal clock used if "e" is pressed and the progress is automatic */

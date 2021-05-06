@@ -37,8 +37,9 @@ class StateDisplayer {
    * @param bottom_right, bottom right corner of drawable area
    * @param currentState, state to draw
    */
-  void DisplaySingleState(vec2 top_left, vec2 bottom_right,
-                          unsigned char* currentState);
+  void DisplaySingleState(const vec2& top_left,
+                          const vec2& bottom_right,
+                          const unsigned char* currentState);
   
   /**
    * Method that changes the dimensions if the view size changes 
@@ -56,9 +57,9 @@ class StateDisplayer {
    *                      brought it to the current state
    */
   void DisplaySecondaryInfo(double percent,
-                            string message,
-                            string key,
-                            string current_step);
+                            const string& message,
+                            const string& key,
+                            const string& current_step);
   
  private:
   /** Helper that displays all the non-state-grid information */

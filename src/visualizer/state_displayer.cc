@@ -29,15 +29,15 @@ void StateDisplayer::SetDimensions(size_t width, size_t height) {
 }
 
 void StateDisplayer::DisplaySecondaryInfo(double percent,
-                                          string message,
-                                          string key,
-                                          string current_step) {
+                                          const string& message,
+                                          const string& key,
+                                          const string& current_step) {
   display_helper_.DisplayInfoForState(percent, message, key, current_step);
 }
 
-void StateDisplayer::DisplaySingleState(vec2 top_left,
-                                        vec2 bottom_right,
-                                        unsigned char* current_state) {
+void StateDisplayer::DisplaySingleState(const vec2& top_left,
+                                        const vec2& bottom_right,
+                                        const unsigned char* current_state) {
   size_t grid_box_width = (bottom_right.x - top_left.x) / 4;
   size_t grid_box_height = (bottom_right.y - top_left.y) / 4;
   

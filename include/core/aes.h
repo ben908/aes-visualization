@@ -21,7 +21,6 @@ class AES {
    * Numbers of bits per hex value
    */
   static const size_t kBitsPerHexValue = 4;
-  
   static const size_t kSBoxDimensionSize = 16;
   
   /**
@@ -44,7 +43,7 @@ class AES {
    * @param step enum to turn to string
    * @return string the represents the enum
    */
-  static std::string EnumToString(Step step);
+  static std::string EnumToString(const Step& step);
   
   /**
    * destructor that deletes all heap allocated memory used by this
@@ -69,7 +68,7 @@ class AES {
    * @param out, pointer message will be saved to
    * @param key, key as char array pointer 
    */
-  void Encrypt(unsigned char* in, unsigned char* out, unsigned char* key);
+  void Encrypt(const unsigned char* in, unsigned char* out, unsigned char* key);
   
   /**
    * Encrypts a 128-bit block of data
@@ -85,7 +84,7 @@ class AES {
    * @param out, pointer message will be saved to
    * @param key, key as char array pointer 
    */
-  void Decrypt(unsigned char* in, unsigned char* out, unsigned char* key);
+  void Decrypt(const unsigned char* in, unsigned char* out, unsigned char* key);
   
   /**
    * Decrypts a 128-bit block data
@@ -121,7 +120,7 @@ class AES {
    * @param val1 second value
    * @return result as unsigned char
    */
-  static unsigned char FiniteMultiply(unsigned char val0, unsigned char val1);
+  static const unsigned char FiniteMultiply(unsigned char val0, unsigned char val1);
   
  private:
   /**

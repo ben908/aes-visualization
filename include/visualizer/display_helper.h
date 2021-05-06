@@ -17,16 +17,16 @@ using std::string;
 class DisplayHelper {
  public:
   /** Layout constants */
-  static const ci::Color kBackgroundColor;
-  static const ci::Color kBorderColor;
-  static const ci::Color8u kProgressBarColor;
-  static const std::string kFontName;
+  static const ci::Color    kBackgroundColor;
+  static const ci::Color    kBorderColor;
+  static const ci::Color8u  kProgressBarColor;
+  static const std::string  kFontName;
 
-  static constexpr double kProgressBarHeightPercent = 0.09;
-  static constexpr double kMainHeightPercent = 0.76;
-  static constexpr double kMenuHeightIndividualPercent = 0.19;
+  static constexpr double   kProgressBarHeightPercent = 0.09;
+  static constexpr double   kMainHeightPercent = 0.76;
+  static constexpr double   kMenuHeightIndividualPercent = 0.19;
 
-  static constexpr double kMainWidthPercent = 0.7;
+  static constexpr double   kMainWidthPercent = 0.7;
 
   
   /**
@@ -58,9 +58,9 @@ class DisplayHelper {
    *                      to the the current state
    */
   void DisplayInfoForState(double percent,
-                           string message,
-                           string key,
-                           string current_step);
+                           const string& message,
+                           const string& key,
+                           const string& current_step);
   
   /**
    * Returns space available for the state grid, used with the method below 
@@ -80,7 +80,7 @@ class DisplayHelper {
    * @param bottom_right, bottom right corner of grid
    * @return center point of the grid
    */
-  static vec2 TextLocation(vec2 top_left, vec2 bottom_right);
+  static vec2 TextLocation(const vec2& top_left, const vec2& bottom_right);
 
   /**
    * Displays text at the center of a given location box
@@ -88,19 +88,19 @@ class DisplayHelper {
    * @param bottom_right_corner, bottom right corner of the box
    * @param text, text to be displayed
    */
-  static void DisplayText(vec2 top_left_corner,
-                   vec2 bottom_right_corner,
-                   string text);
+  static void DisplayText(const vec2& top_left_corner,
+                          const vec2& bottom_right_corner,
+                          const string& text);
   
  private:
   
   /** Helpers that draw indivudal components of the UI */
-  void DrawLoadBar(double percent);
-  void DrawMessage(string message);
-  void DrawKey(string key);
-  void DrawStepBox(string current_step);
-  void DrawMainButtons();
-  void DrawInstructions();
+  void DrawLoadBar      (double percent)            const;
+  void DrawMessage      (const string& message)     const;
+  void DrawKey          (const string& key)         const;
+  void DrawStepBox      (const string& current_step)const;
+  void DrawMainButtons  () const;
+  void DrawInstructions () const;
   
   /** Layout Values for the entire UI */
   size_t max_X_;

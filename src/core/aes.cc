@@ -78,7 +78,7 @@ void AES::StoreState(Step step, unsigned char** state) {
 }
 
 
-void AES::Encrypt(unsigned char* in, unsigned char* out, unsigned char* message_key) {
+void AES::Encrypt(const unsigned char* in, unsigned char* out, unsigned char* message_key) {
   ClearAllStates();
   key_ = message_key;
   MakeKeyExpansion(key_, expanded_key_);
@@ -124,7 +124,7 @@ void AES::EncryptBlock(const unsigned char* in, unsigned char* out) {
 }
 
 
-void AES::Decrypt(unsigned char* in, unsigned char* out, unsigned char* key) {
+void AES::Decrypt(const unsigned char* in, unsigned char* out, unsigned char* key) {
   ClearAllStates();
   key_ = key;
   MakeKeyExpansion(key_, expanded_key_);
@@ -259,7 +259,7 @@ void AES::InverseMixColumn(size_t column) {
 }
 
 //multiplication of val0 and val1 in the galois field
-unsigned char AES::FiniteMultiply(unsigned char val1, unsigned char val2) {
+const unsigned char AES::FiniteMultiply(unsigned char val1, unsigned char val2) {
   //implementation inspired by https://en.wikipedia.org/wiki/Finite_field_arithmetic
   
   unsigned char p = 0; //end product
@@ -377,7 +377,7 @@ const std::vector<std::tuple<AES::Step, unsigned char*>*>& AES::GetAllState() {
   return all_states_;
 }
 
-std::string AES::EnumToString(AES::Step step) {
+std::string AES::EnumToString(const AES::Step& step) {
   switch(step) {
     case AES::Start:
       return "Start Message";
