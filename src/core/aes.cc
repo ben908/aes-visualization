@@ -57,7 +57,7 @@ AES::~AES() {
 
 void AES::ClearAllStates() {
   for (std::tuple<Step, unsigned char*>* tuple : all_states_) {
-    delete std::get<1>(*tuple);
+    delete[] std::get<1>(*tuple);
     delete tuple;
   }
   all_states_.clear();
