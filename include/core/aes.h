@@ -18,6 +18,7 @@ class AES {
   static const size_t kColumnCount =        4;
   static const size_t kBitsPerHexValue =    4;
   static const size_t kSBoxDimensionSize =  16;
+  static const size_t kBlockSize =          4;
   
   /**
    * Constants that change for different key lengths

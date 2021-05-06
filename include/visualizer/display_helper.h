@@ -93,7 +93,6 @@ class DisplayHelper {
                           const string& text);
   
  private:
-  
   /** Helpers that draw indivudal components of the UI */
   void DrawLoadBar      (double percent)            const;
   void DrawMessage      (const string& message)     const;
@@ -129,7 +128,6 @@ class DisplayHelper {
 
   vec2 instructions_top_left_;
   vec2 instructions_bottom_right_;
-  
 };
 
 } //namespace visualizer

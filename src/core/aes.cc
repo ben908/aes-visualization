@@ -5,22 +5,22 @@
 namespace aes {
 
 AES::AES() {
-  block_size_ = 4;
+  block_size_ = kBlockSize;
   state_ = new unsigned char *[kBitsPerHexValue];
   state_[0] = new unsigned char[kBitsPerHexValue * block_size_];
   for (size_t i = 0; i < kBitsPerHexValue; ++i) {
     state_[i] = state_[0] + block_size_ * i;
   }
 
-  key_block_length_ = 4;
-  num_rounds_ = 10;
+  key_block_length_ = k128BlockLength;
+  num_rounds_ = k128NumRounds;
   expanded_key_ = new unsigned char
       [kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
 }
 
 AES::AES(size_t key_length) {
   //these magic numbers are from the aes specification from NIST
-  block_size_ = 4;
+  block_size_ = kBlockSize;
   state_ = new unsigned char *[kBitsPerHexValue];
   state_[0] = new unsigned char[kBitsPerHexValue * block_size_];
   for (size_t i = 0; i < kBitsPerHexValue; ++i) {
