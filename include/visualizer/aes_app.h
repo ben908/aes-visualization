@@ -16,6 +16,10 @@ using glm::vec2;
  */
 class AESApp : public ci::app::App {
  public:
+  
+  /** Speed the display changes in once every 20 update calls */
+  static const size_t kAnimationSpeed = 20;
+  
   /** Destructor that deletes the key, message, and encrypted message */
   ~AESApp();
   
@@ -39,16 +43,23 @@ class AESApp : public ci::app::App {
   const size_t kDefaultWindowSize = 875;
   
  private:
+  /** Helper that remakes all values for when a key-length changes */
+  void Reset();
+  
   /** Makes a random key and message for a given key size */
   void MakeRandomInfo();
+  
+  /**Checks if the current state has a valid value, and adjusts it if needed */
+  void StateCheck();
   
   /** Information about the current app state */
   size_t current_key_size_;
   unsigned char* message_;
   unsigned char* key_;
   unsigned char* encrypted_message_;
-  size_t current_state_;
+  int current_state_; //not size_t since if state goes below 0, no underflow
   bool is_animating_;
+  bool is_encrypting_;
   size_t key_size_;
   
   /** History of all states that are used to encypt a single block */
@@ -61,7 +72,7 @@ class AESApp : public ci::app::App {
   StateDisplayer state_displayer_;
   
   /** Main algorithm, defaults to a 128-bit key */
-  AES aes_ = AES(128);
+  AES* aes_;
   
   /** Called when the window size changes */
   void UpdateSizing();

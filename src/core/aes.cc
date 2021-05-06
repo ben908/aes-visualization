@@ -4,6 +4,20 @@
 
 namespace aes {
 
+AES::AES() {
+  block_size_ = 4;
+  state_ = new unsigned char *[kBitsPerHexValue];
+  state_[0] = new unsigned char[kBitsPerHexValue * block_size_];
+  for (size_t i = 0; i < kBitsPerHexValue; ++i) {
+    state_[i] = state_[0] + block_size_ * i;
+  }
+
+  key_block_length_ = 4;
+  num_rounds_ = 10;
+  expanded_key_ = new unsigned char
+      [kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
+}
+
 AES::AES(int keyLength) {
   //these magic numbers are from the aes specification from NIST
   block_size_ = 4;
@@ -16,19 +30,22 @@ AES::AES(int keyLength) {
   if (keyLength == 128) {
     key_block_length_ = 4;
     num_rounds_ = 10;
-    expanded_key_ = new unsigned char[4 * block_size_ * (num_rounds_ + 1)];
+    expanded_key_ = new unsigned char
+        [kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
     return;
   }
   if (keyLength == 192) {
     key_block_length_ = 6;
     num_rounds_ = 12;
-    expanded_key_ = new unsigned char[4 * block_size_ * (num_rounds_ + 1)];
+    expanded_key_ = new unsigned char
+        [kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
     return;
   }
   if (keyLength == 256) {
     key_block_length_ = 8;
     num_rounds_ = 14;
-    expanded_key_ = new unsigned char[4 * block_size_ * (num_rounds_ + 1)];
+    expanded_key_ = new unsigned char
+        [kBitsPerHexValue * block_size_ * (num_rounds_ + 1)];
     return;
   }
   throw std::bad_function_call();
@@ -51,7 +68,7 @@ void AES::ClearAllStates() {
 
 void AES::StoreState(Step step, unsigned char** state) {
   auto* state_copy = new unsigned char[kSBoxDimensionSize];
-  for (size_t i = 0; i < 4; ++i) {
+  for (size_t i = 0; i < kColumnCount; ++i) {
     for (size_t j = 0; j < block_size_; ++j) {
       state_copy[i + kBitsPerHexValue * j] = state[i][j];
     }
@@ -70,7 +87,7 @@ void AES::Encrypt(unsigned char* in, unsigned char* out, unsigned char* message_
 
 //in length is 4*block_size_, out same, word is block_size_*(num_rounds_ + 1)
 void AES::EncryptBlock(const unsigned char* in, unsigned char* out) {
-  for (size_t i = 0; i < kBitsPerHexValue; i++) {
+  for (size_t i = 0; i < kColumnCount; i++) {
     for (size_t j = 0; j < block_size_; j++) {
       state_[i][j] = in[i + kBitsPerHexValue * j];
     }
@@ -98,7 +115,7 @@ void AES::EncryptBlock(const unsigned char* in, unsigned char* out) {
   AddRoundKey(expanded_key_ + num_rounds_ * kBitsPerHexValue * block_size_);
   StoreState(RoundKeyAddition, state_);
   
-  for (size_t i = 0; i < kBitsPerHexValue; i++) {
+  for (size_t i = 0; i < kColumnCount; i++) {
     for (size_t j = 0; j < block_size_; j++) {
       out[i + kBitsPerHexValue * j] = state_[i][j];
     }

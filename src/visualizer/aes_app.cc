@@ -6,6 +6,7 @@ namespace aes {
 namespace visualizer {
 
 AESApp::~AESApp() {
+  delete aes_;
   delete[] message_;
   delete[] key_;
   delete[] encrypted_message_;
@@ -18,9 +19,8 @@ AESApp::AESApp() {
   current_state_ = 0;
   current_key_size_ = 128;
   MakeRandomInfo();
-  aes_.Encrypt(message_, encrypted_message_, key_);
-  all_states_ = aes_.GetAllState();
   is_animating_ = false;
+  is_encrypting_ = true;
 }
 
 void AESApp::MakeRandomInfo() {
@@ -29,20 +29,25 @@ void AESApp::MakeRandomInfo() {
   
   encrypted_message_ = new unsigned char[16];
   if (current_key_size_ == 128) {
+    aes_ = new AES(128);
     key_size_ = 16;
     key_ = new unsigned char[16];
     for (size_t i = 0; i < 16; ++i) key_[i] = (unsigned char) rand();
   }
   if (current_key_size_ == 192) {
+    aes_ = new AES(192);
     key_size_ = 24;
     key_ = new unsigned char[24];
     for (size_t i = 0; i < 24; ++i) key_[i] = (unsigned char) rand();
   }
   if (current_key_size_ == 256) {
+    aes_ = new AES(256);
     key_size_ = 32;
     key_ = new unsigned char[32];
     for (size_t i = 0; i < 32; ++i) key_[i] = (unsigned char) rand();
   }
+  aes_->Encrypt(message_, encrypted_message_, key_);
+  all_states_ = aes_->GetAllState();
 }
 
 void AESApp::draw() {
@@ -56,24 +61,25 @@ void AESApp::draw() {
   }
   ci::gl::clear(DisplayHelper::kBackgroundColor);
   
-  if (all_states_.size() == 0) return;
-  if (current_state_ <= 0) {
-    state_displayer_.DisplayStateChange(all_states_[0]);
-    DrawMainShapes();
-  } else if (all_states_.size() > current_state_ + 1) {
-    state_displayer_.DisplayStateChange(all_states_[current_state_]);
-    DrawMainShapes();
-  } else {
+  if (all_states_.empty()) return;
+  StateCheck();
+  state_displayer_.DisplayStateChange(all_states_[current_state_]);
+  DrawMainShapes();
+}
+
+void AESApp::StateCheck() {
+  if (current_state_ >= all_states_.size()) {
     is_animating_ = false;
     current_state_ = all_states_.size() - 1;
-    state_displayer_.DisplayStateChange(all_states_[current_state_]);
-    DrawMainShapes();
   }
-  
+  if (current_state_ < 0) {
+    is_animating_ = false;
+    current_state_ = 0;
+  }
 }
 
 void AESApp::DrawMainShapes() {
-  double percent = (double_t) current_state_ / (double_t) all_states_.size();
+  double percent = (double_t) current_state_ / ((double_t) all_states_.size() - 1.0);
   std::stringstream ss;
   for (size_t i = 0; i < 16; ++i) { //for message
     ss << " " << std::hex << (int)message_[i];
@@ -85,22 +91,22 @@ void AESApp::DrawMainShapes() {
     ss << " " << std::hex << (int)key_[i];
   }
   string key = ss.str();
-  string step = AES::EnumToString(std::get<0>(*all_states_[current_state_ + 1]));
+  string step = AES::EnumToString(std::get<0>(*all_states_[current_state_]));
   state_displayer_.DisplaySecondaryInfo(percent, message, key, step);
 }
-
-
 
 void AESApp::update() {
   if (is_animating_) {
     clock_++;
-    if (clock_ % 20 == 1) {
-      current_state_++;
-    }
-    if (current_state_ >= aes_.GetAllState().size()) {
-      is_animating_ = false;
+    if (clock_ % kAnimationSpeed == 1) {
+      if (is_encrypting_) {
+        current_state_++;
+      } else {
+        current_state_--;
+      }
     }
   }
+  StateCheck();
 }
 
 void AESApp::UpdateSizing() {
@@ -108,14 +114,7 @@ void AESApp::UpdateSizing() {
 }
 
 void AESApp::mouseDown(ci::app::MouseEvent event) {
-  if (event.getX() <= 0) {
-    current_state_ = 0;
-  } else if (event.getX() > max_X_) {
-    current_state_ = all_states_.size() - 1;
-  } else {
-    current_state_ = (event.getX() * all_states_.size()) / max_X_;
-  }
-  is_animating_ = false;
+  mouseDrag(event);
 }
 
 void AESApp::mouseDrag(ci::app::MouseEvent event) {
@@ -129,18 +128,37 @@ void AESApp::mouseDrag(ci::app::MouseEvent event) {
   is_animating_ = false;
 }
 
+void AESApp::Reset() {
+  delete aes_;
+  delete[] message_;
+  delete[] key_;
+  delete[] encrypted_message_;
+  MakeRandomInfo();
+  current_state_ = 0;
+}
+
 void AESApp::keyDown(ci::app::KeyEvent event) {
   switch (event.getCode()) {
+    case ci::app::KeyEvent::KEY_LEFT:
+      current_state_--;
+      is_animating_ = false;
+      is_encrypting_ = false;
+      break;
+      
+    case ci::app::KeyEvent::KEY_RIGHT:
+      current_state_++;
+      is_animating_ = false;
+      is_encrypting_ = true;
+      break;
+      
     case ci::app::KeyEvent::KEY_e:
-      aes_.Encrypt(message_, encrypted_message_, key_);
-      all_states_ = aes_.GetAllState();
       is_animating_ = true;
+      is_encrypting_ = true;
       break;
 
     case ci::app::KeyEvent::KEY_d:
-      aes_.Decrypt(encrypted_message_, message_, key_);
-      all_states_ = aes_.GetAllState();
-      is_animating_ = false;
+      is_animating_ = true;
+      is_encrypting_ = false;
       break;
 
     case ci::app::KeyEvent::KEY_p:
@@ -155,26 +173,17 @@ void AESApp::keyDown(ci::app::KeyEvent event) {
       
     case ci::app::KeyEvent::KEY_1:
       current_key_size_ = 128;
-      delete[] message_;
-      delete[] key_;
-      delete[] encrypted_message_;
-      MakeRandomInfo();
+      Reset();
       break;
       
     case ci::app::KeyEvent::KEY_2:
       current_key_size_ = 192;
-      delete[] message_;
-      delete[] key_;
-      delete[] encrypted_message_;
-      MakeRandomInfo();
+      Reset();
       break;
       
     case ci::app::KeyEvent::KEY_3:
       current_key_size_ = 256;
-      delete[] message_;
-      delete[] key_;
-      delete[] encrypted_message_;
-      MakeRandomInfo();
+      Reset();
       break;
   }
 }

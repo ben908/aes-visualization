@@ -51,7 +51,12 @@ class AES {
    * implementation
    */
   ~AES();
-
+  
+  /** 
+   * Default Constructor, creates an instance of aes with 128-bit key 
+   */
+  AES();
+  
   /**
    * Makes an instance of the class
    * @param length of the key to make, either 128-bit, 192-bit, or 256-bit
@@ -213,6 +218,9 @@ class AES {
    */
   void InvSubBytes();
   
+  /**
+   * deletes the saved state info
+   */
   void ClearAllStates();
 
   /**
